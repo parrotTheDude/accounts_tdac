@@ -24,6 +24,13 @@
   </button>
 </form>
 
+  @if(request()->has('search') || request()->has('role'))
+  <a href="{{ route('users.index') }}"
+    class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md text-sm">
+    Reset Filters
+  </a>
+  @endif
+
 <!-- Users Table -->
 <table class="w-full bg-white rounded-lg shadow overflow-hidden">
   <thead class="bg-gray-100 text-left text-sm text-gray-700">
