@@ -52,4 +52,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/settings', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::patch('/users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
 });
