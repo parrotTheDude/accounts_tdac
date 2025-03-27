@@ -112,7 +112,7 @@ class User extends Authenticatable
 
     public function getAvailableRoles()
     {
-        $currentRank = self::ROLE_RANKS[$this->user_type];
+        $currentRank = self::ROLE_RANKS[$this->user_type] ?? -999;
 
         return collect(self::ROLES)->filter(function ($label, $role) use ($currentRank) {
             return self::ROLE_RANKS[$role] <= $currentRank;

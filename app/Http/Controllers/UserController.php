@@ -9,8 +9,14 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        $currentUser = auth()->user();
         $query = User::withCount('subscriptions')->latest();
 
+        // Apply role filtering: only allow current user to see roles they are allowed to
+        $allowedRoles = array_keys($currentUser->getAvailableRoles());
+        $query->whereIn('user_type', $allowedRoles);
+
+        // Search filter
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -20,8 +26,9 @@ class UserController extends Controller
             });
         }
 
-        if ($request->filled('role')) {
-            $query->where('user_type', $request->input('role'));
+        // Optional role filter (dropdown)
+        if ($request->filled('role') && in_array($request->role, $allowedRoles)) {
+            $query->where('user_type', $request->role);
         }
 
         $users = $query->paginate(15)->withQueryString();
