@@ -49,12 +49,11 @@
           @if ($user->hasVerifiedEmail())
             <img src="{{ asset('icons/correct.svg') }}" alt="Verified" class="w-4 h-4 inline-block">
           @else
-            <form action="{{ route('verification.send') }}" method="POST" class="inline">
-              @csrf
-              <button type="submit" class="text-sm text-blue-600 hover:underline">
-                Verify Email
-              </button>
-            </form>
+          <button type="button"
+                  onclick="document.getElementById('sendVerificationForm').submit()"
+                  class="text-sm text-blue-600 hover:underline">
+            Verify Email
+          </button>
           @endif
         </span>
       </label>
@@ -140,6 +139,11 @@
   </div>
 
   </form>
+
+  <!-- Hidden form OUTSIDE main form -->
+<form id="sendVerificationForm" action="{{ route('verification.send') }}" method="POST" class="hidden">
+  @csrf
+</form>
 
   <script>
   const roleSelect = document.getElementById('user-role');
