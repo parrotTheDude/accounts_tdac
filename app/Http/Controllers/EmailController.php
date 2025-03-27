@@ -41,9 +41,14 @@ class EmailController extends Controller
     {
         $template = $postmark->getTemplateById($templateId);
 
-        // Extract variables like {{ name }} or {{ event_date }}
         preg_match_all('/{{\s*(.*?)\s*}}/', $template->getHtmlBody(), $matches);
-        $variables = array_unique($matches[1]);
+
+        $variables = collect($matches[1])
+            ->unique()
+            ->filter(function ($var) {
+                return !str_contains(strtolower($var), 'unsubscribe');
+            })
+            ->values(); // Reset array keys
 
         return view('emails.show', [
             'template' => $template,

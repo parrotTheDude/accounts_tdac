@@ -16,7 +16,6 @@
   <div class="bg-white shadow-md rounded-lg p-6 space-y-4">
     <p><strong>Template ID:</strong> {{ $template->getTemplateId() }}</p>
     <p><strong>Subject:</strong> {{ $template->getSubject() }}</p>
-    <p><strong>Alias:</strong> {{ $template->getAlias() ?? '—' }}</p>
 
     @if (count($variables))
     <div class="mt-8">
