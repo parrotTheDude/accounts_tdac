@@ -4,7 +4,7 @@
   <h1 class="text-2xl font-bold text-gray-800 mb-6">Email Templates</h1>
 
   <a href="{{ route('emails.history') }}"
-    class="inline-block mb-6 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-medium shadow-sm">
+    class="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow">
     📜 View Bulk Email History
   </a>
 

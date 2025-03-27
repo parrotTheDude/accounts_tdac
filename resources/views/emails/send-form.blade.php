@@ -41,7 +41,7 @@
     @endif
 
     <a href="{{ route('emails.index') }}"
-      class="inline-block mb-6 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-sm font-medium">
+      class="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow">
       ⬅️ Back to Email Templates
     </a>
 
