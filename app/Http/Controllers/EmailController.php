@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\PostmarkService;
 use App\Models\Subscription;
+use App\Jobs\SendBulkEmailJob;
 
 class EmailController extends Controller
 {
@@ -110,63 +111,37 @@ class EmailController extends Controller
     public function sendBulk(Request $request, $templateId, PostmarkService $postmark)
     {
         $validated = $request->validate([
-            'list'       => 'required|string',
-            'variables'  => 'nullable|array',
-            'password'   => 'required|string',
+            'list'      => 'required|string',
+            'variables' => 'nullable|array',
+            'password'  => 'required|string',
         ]);
 
-        // ✅ Confirm password
         if (!\Hash::check($validated['password'], auth()->user()->password)) {
             return back()->withErrors(['password' => 'Incorrect password. Bulk email not sent.']);
         }
 
-        $recipientList = $validated['list'];
-        $variables     = $validated['variables'] ?? [];
+        // ✅ All good — dispatch the job to send in the background
+        dispatch(new \App\Jobs\SendBulkEmailJob(
+            $templateId,
+            $validated['list'],
+            $validated['variables'] ?? [],
+            auth()->user()->id
+        ));
 
-        // ✅ Determine sender + stream based on list
-        $messageStream = ($recipientList === 'newsletter') ? 'newsletter' : 'bonus-event';
-        $fromEmail     = ($recipientList === 'newsletter') ? 'newsletter@tdacvic.com' : 'events@tdacvic.com';
+        return view('emails.bulk-in-progress', [
+            'list' => $validated['list'],
+        ]);
+    }
 
-        // ✅ Fetch recipients (based on your DB structure)
-        $emails = Subscription::where('list_name', $recipientList)
-            ->where('subscribed', true)
-            ->with('user')
-            ->get()
-            ->pluck('user.email')
-            ->unique()
-            ->values();
+    public function liveLog()
+    {
+        $logPath = storage_path('logs/laravel.log');
 
-        if ($emails->isEmpty()) {
-            \Log::warning('No recipients found for list', ['list_name' => $recipientList]);
-            return back()->withErrors(['error' => 'No recipients found for this list.']);
+        if (!file_exists($logPath)) {
+            return response('Log file not found.', 404);
         }
 
-        // ✅ Fetch template name from Postmark
-        $template = $postmark->getTemplateById($templateId);
-        $templateName = $template->getName();
-
-        $totalSent = 0;
-        $batchSize = 500;
-
-        foreach ($emails->chunk($batchSize) as $batch) {
-            foreach ($batch as $email) {
-                try {
-                    $postmark->sendEmail(
-                        $templateId,
-                        $email,
-                        $variables,
-                        $fromEmail,
-                        $templateName,
-                        $messageStream
-                    );
-
-                    $totalSent++;
-                } catch (\Exception $e) {
-                    \Log::error("Bulk email failed for {$email}: {$e->getMessage()}");
-                }
-            }
-        }
-
-        return redirect()->route('emails.index')->with('success', "Bulk email sent to {$totalSent} recipients.");
+        $lines = array_slice(file($logPath), -100); // Last 100 lines
+        return response(implode('', $lines), 200, ['Content-Type' => 'text/plain']);
     }
 }

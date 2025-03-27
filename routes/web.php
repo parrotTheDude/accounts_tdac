@@ -31,3 +31,4 @@ Route::get('/emails/{templateId}', [EmailController::class, 'show'])->name('emai
 Route::post('/emails/{templateId}/send-test', [EmailController::class, 'sendTest'])->name('emails.sendTest');
 Route::get('/emails/{templateId}/send', [EmailController::class, 'sendForm'])->name('emails.sendForm');
 Route::post('/emails/{templateId}/send', [EmailController::class, 'sendBulk'])->name('emails.sendBulk');
+Route::get('/emails/live-log', [EmailController::class, 'liveLog']);
