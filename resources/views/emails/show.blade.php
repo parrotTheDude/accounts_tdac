@@ -9,9 +9,13 @@
     <p><strong>Type:</strong> {{ $template->getTemplateType() }}</p>
     <p><strong>Alias:</strong> {{ $template->getAlias() ?? '—' }}</p>
 
+    @php
+        $encodedHtml = base64_encode($template->getHtmlBody());
+    @endphp
+
     <div class="mt-6">
     <h2 class="text-lg font-semibold mb-2">Preview:</h2>
-    
+
     <div class="border border-gray-300 rounded-md overflow-hidden">
         <iframe id="templatePreview"
                 class="w-full h-[600px] bg-white"
@@ -24,9 +28,11 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const iframe = document.getElementById('templatePreview');
-        const html = @json($template->getHtmlBody());
+        const encodedHtml = "{{ $encodedHtml }}";
 
+        const html = atob(encodedHtml); // decode base64
         const doc = iframe.contentDocument || iframe.contentWindow.document;
+
         doc.open();
         doc.write(html);
         doc.close();
