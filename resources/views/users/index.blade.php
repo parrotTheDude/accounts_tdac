@@ -26,7 +26,6 @@
       <th class="px-4 py-3">Name</th>
       <th class="px-4 py-3">Email</th>
       <th class="px-4 py-3">Role</th>
-      <th class="px-4 py-3">Subscriptions</th>
       <th class="px-4 py-3">Actions</th>
     </tr>
   </thead>
@@ -44,7 +43,6 @@
             {{ ucfirst($user->user_type) }}
           </span>
         </td>
-        <td class="px-4 py-2">{{ $user->subscriptions_count }}</td>
         <td class="px-4 py-2 space-x-2">
     <a href="{{ route('users.edit', $user->id) }}"
       class="text-blue-600 hover:underline text-sm">Edit</a>

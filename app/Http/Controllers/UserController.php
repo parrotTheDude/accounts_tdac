@@ -39,4 +39,33 @@ class UserController extends Controller
 
         return back()->with('success', 'Role updated.');
     }
+
+    public function edit(User $user)
+    {
+        return view('users.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'gender' => 'nullable|in:male,female,nonbinary,other',
+            'user_type' => 'required|in:' . implode(',', array_keys(User::ROLES)),
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user->update([
+            'name' => $validated['name'],
+            'last_name' => $validated['last_name'] ?? null,
+            'gender' => $validated['gender'] ?? null,
+            'user_type' => $validated['user_type'],
+        ]);
+
+        if (!empty($validated['password'])) {
+            $user->update(['password' => \Hash::make($validated['password'])]);
+        }
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+    }
 }
