@@ -140,6 +140,16 @@ class EmailController extends Controller
         $sent = 0;
         $failed = 0;
 
+        $bulkEmail = \App\Models\BulkEmail::create([
+          'user_id' => auth()->id(),
+          'template_id' => $templateId,
+          'template_name' => $templateName,
+          'list_name' => $recipientList,
+          'variables' => $variables,
+          'emails_sent' => 0,
+          'failed_count' => 0,
+      ]);
+
         foreach ($emails as $email) {
             try {
                 $postmark->sendEmail(

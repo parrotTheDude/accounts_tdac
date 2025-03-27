@@ -39,4 +39,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('{templateId}/send', [EmailController::class, 'sendBulk'])->name('sendBulk');
         Route::post('{templateId}/send-test', [EmailController::class, 'sendTest'])->name('sendTest');
     });
+
+    Route::get('/emails/history', [\App\Http\Controllers\BulkEmailController::class, 'index'])
+    ->name('emails.history');
 });
