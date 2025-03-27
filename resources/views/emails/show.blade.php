@@ -11,12 +11,27 @@
 
     <div class="mt-6">
     <h2 class="text-lg font-semibold mb-2">Preview:</h2>
-    <div class="border border-gray-300 rounded-md overflow-auto bg-white shadow">
-        <div class="p-4 prose max-w-none">
-        {!! $template->getHtmlBody() !!}
-        </div>
+    
+    <div class="border border-gray-300 rounded-md overflow-hidden">
+        <iframe id="templatePreview"
+                class="w-full h-[600px] bg-white"
+                sandbox
+                frameborder="0">
+        </iframe>
     </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const iframe = document.getElementById('templatePreview');
+        const html = @json($template->getHtmlBody());
+
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+    });
+    </script>
 
     <div class="mt-6 flex gap-4">
       <form method="POST" action="{{ route('emails.sendTest', $template->getTemplateId()) }}">
