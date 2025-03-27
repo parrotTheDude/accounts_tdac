@@ -75,10 +75,12 @@ class EmailController extends Controller
         $template = $postmark->getTemplateById($templateId);
 
         // Get all unique subscription lists from DB
-        $lists = \App\Models\Subscription::select('list_name')
-            ->where('subscribed', true)
-            ->distinct()
-            ->pluck('list_name');
+        $lists = \App\Models\Subscription::where('subscribed', true)
+        ->pluck('list_name')
+        ->map(fn($name) => trim($name))
+        ->filter()
+        ->unique()
+        ->values();
 
         // Extract variables like before
         preg_match_all('/{{\s*(.*?)\s*}}/', $template->getHtmlBody(), $matches);
