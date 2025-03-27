@@ -72,9 +72,11 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
       @foreach ($lists as $list)
-        @php
-          $subscribed = $user->subscriptions->contains('list_name', $list);
-        @endphp
+      @php
+        $subscribed = $user->subscriptions->contains(function ($sub) use ($list) {
+          return $sub->list_name === $list && $sub->subscribed;
+        });
+      @endphp
 
         <label class="flex items-center space-x-2">
           <input type="checkbox" name="subscriptions[]" value="{{ $list }}" {{ $subscribed ? 'checked' : '' }}
