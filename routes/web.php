@@ -27,3 +27,6 @@ Route::get('/emails', function () {
 
 Route::get('/emails', [EmailController::class, 'index'])->middleware('auth');
 Route::post('/emails/send/{templateId}', [EmailController::class, 'send'])->middleware('auth');
+Route::get('/emails/{templateId}', [EmailController::class, 'show'])->name('emails.show')->middleware('auth');
+Route::post('/emails/{templateId}/send-test', [EmailController::class, 'sendTest'])->name('emails.sendTest');
+Route::get('/emails/{templateId}/send', [EmailController::class, 'sendForm'])->name('emails.sendForm');

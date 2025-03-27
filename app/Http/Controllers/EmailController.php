@@ -36,4 +36,20 @@ class EmailController extends Controller
 
         return back()->with('success', 'Email sent!');
     }
+
+    public function show($templateId, PostmarkService $postmark)
+    {
+        $templates = $postmark->getTemplates();
+
+        // Find the one with the matching ID
+        $template = collect($templates)->firstWhere(function ($t) use ($templateId) {
+            return $t->getTemplateId() == $templateId;
+        });
+
+        if (!$template) {
+            abort(404, 'Template not found.');
+        }
+
+        return view('emails.show', ['template' => $template]);
+    }
 }

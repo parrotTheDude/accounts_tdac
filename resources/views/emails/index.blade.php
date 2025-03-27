@@ -6,19 +6,17 @@
   <div class="bg-white shadow-md rounded-lg p-6">
     @if(count($templates))
       <ul class="divide-y divide-gray-200">
-        @foreach ($templates as $template)
-          <li class="py-4 flex justify-between items-center">
+      @foreach ($templates as $template)
+        <li class="py-4 flex justify-between items-center">
             <div>
-              <h2 class="font-semibold text-gray-800">{{ $template->getName() }}</h2>
-              <p class="text-gray-500 text-sm">Template ID: {{ $template->getTemplateId() }}</p>
+            <h2 class="font-semibold text-gray-800">{{ $template->getName() }}</h2>
+            <p class="text-gray-500 text-sm">Template ID: {{ $template->getTemplateId() }}</p>
             </div>
-            <form method="POST" action="/emails/send/{{ $template->getTemplateId() }}">
-              @csrf
-              <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                Send
-              </button>
-            </form>
-          </li>
+            <a href="{{ route('emails.show', $template->getTemplateId()) }}"
+            class="text-blue-600 hover:underline font-medium">
+            Select
+            </a>
+        </li>
         @endforeach
       </ul>
     @else
