@@ -13,7 +13,7 @@ class UserController extends Controller
         $query = User::withCount('subscriptions')->latest();
 
         // Apply role filtering: only allow current user to see roles they are allowed to
-        $allowedRoles = array_keys($currentUser->getAvailableRoles());
+        $allowedRoles = $currentUser->getAvailableRoles()->keys()->all();
         $query->whereIn('user_type', $allowedRoles);
 
         // Search filter
