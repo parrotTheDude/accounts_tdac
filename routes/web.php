@@ -48,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::patch('/users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::post('/users/{user}/subscriptions', [UserController::class, 'updateSubscriptions'])
+    ->name('users.updateSubscriptions');
 
         // Subscriptions
         Route::view('/subscriptions', 'subscriptions.index')->name('subscriptions.index');

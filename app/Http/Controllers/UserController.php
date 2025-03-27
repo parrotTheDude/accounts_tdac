@@ -77,4 +77,24 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
+
+    public function updateSubscriptions(Request $request, User $user)
+    {
+        $this->authorize('edit-subscriptions', $user);
+
+        $subscriptions = $request->input('subscriptions', []);
+
+        // Delete existing
+        $user->subscriptions()->delete();
+
+        // Add new
+        foreach ($subscriptions as $list) {
+            $user->subscriptions()->create([
+                'list_name' => $list,
+                'subscribed' => true,
+            ]);
+        }
+
+        return back()->with('success', 'Subscriptions updated.');
+    }
 }

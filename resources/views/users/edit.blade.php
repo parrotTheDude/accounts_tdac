@@ -95,6 +95,35 @@
   </div>
 @endif
 
+<hr class="my-8">
+
+<h2 class="text-xl font-bold text-gray-800 mb-4">Email Subscriptions</h2>
+
+<form method="POST" action="{{ route('users.updateSubscriptions', $user) }}" class="space-y-4">
+  @csrf
+
+  @php
+    $userSubs = $user->subscriptions->pluck('list_name')->toArray();
+    $allLists = ['newsletter', 'calendar-release', 'bonus-event', 'teens-social', 'service-agreements', 'participant-info'];
+  @endphp
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    @foreach ($allLists as $list)
+      <label class="flex items-center space-x-2">
+        <input type="checkbox" name="subscriptions[]" value="{{ $list }}"
+          {{ in_array($list, $userSubs) ? 'checked' : '' }}
+          class="form-checkbox text-blue-600">
+        <span class="capitalize text-sm">{{ str_replace('-', ' ', $list) }}</span>
+      </label>
+    @endforeach
+  </div>
+
+  <button type="submit"
+          class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
+    Save Subscriptions
+  </button>
+</form>
+
   <script>
   const roleSelect = document.getElementById('user-role');
   const participantSection = document.getElementById('participant-type-section');
