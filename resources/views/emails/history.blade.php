@@ -3,35 +3,39 @@
 @section('content')
   <h1 class="text-2xl font-bold text-gray-800 mb-6">📜 Bulk Email History</h1>
 
-  <a href="{{ route('emails.index') }}"
-   class="inline-block mb-4 bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-md text-sm font-medium shadow-sm">
-  ⬅️ Back to Templates
-</a>
+  <form action="{{ route('emails.index') }}" method="GET" class="mb-6">
+    <button type="submit"
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium px-4 py-2 rounded-md shadow">
+      ⬅️ Back to Email Templates
+    </button>
+  </form>
 
-  <table class="w-full bg-white rounded-lg shadow overflow-hidden">
-    <thead class="bg-gray-100 text-left text-sm text-gray-700">
-      <tr>
-        <th class="px-4 py-3">Date</th>
-        <th class="px-4 py-3">User</th>
-        <th class="px-4 py-3">Template</th>
-        <th class="px-4 py-3">List</th>
-        <th class="px-4 py-3">Sent</th>
-        <th class="px-4 py-3">Failed</th>
-      </tr>
-    </thead>
-    <tbody class="text-sm text-gray-800 divide-y">
-      @foreach ($emails as $email)
+  <div class="bg-white rounded-lg shadow overflow-x-auto">
+    <table class="min-w-full text-sm text-left text-gray-800">
+      <thead class="bg-gray-100 text-gray-700">
         <tr>
-          <td class="px-4 py-2">{{ $email->created_at->format('M j, Y H:i') }}</td>
-          <td class="px-4 py-2">{{ $email->user->full_name ?? 'Unknown' }}</td>
-          <td class="px-4 py-2">{{ $email->template_name }}</td>
-          <td class="px-4 py-2">{{ $email->list_name }}</td>
-          <td class="px-4 py-2">{{ $email->emails_sent }}</td>
-          <td class="px-4 py-2 text-red-600">{{ $email->failed_count }}</td>
+          <th class="px-4 py-3">Date</th>
+          <th class="px-4 py-3">User</th>
+          <th class="px-4 py-3">Template</th>
+          <th class="px-4 py-3">List</th>
+          <th class="px-4 py-3">Sent</th>
+          <th class="px-4 py-3">Failed</th>
         </tr>
-      @endforeach
-    </tbody>
-  </table>
+      </thead>
+      <tbody class="divide-y">
+        @foreach ($emails as $email)
+          <tr>
+            <td class="px-4 py-2">{{ $email->created_at->format('M j, Y H:i') }}</td>
+            <td class="px-4 py-2">{{ $email->user->full_name ?? 'Unknown' }}</td>
+            <td class="px-4 py-2">{{ $email->template_name }}</td>
+            <td class="px-4 py-2">{{ $email->list_name }}</td>
+            <td class="px-4 py-2">{{ number_format($email->emails_sent) }}</td>
+            <td class="px-4 py-2 text-red-600">{{ number_format($email->failed_count) }}</td>
+          </tr>
+        @endforeach
+      </tbody>
+    </table>
+  </div>
 
   <div class="mt-6">
     {{ $emails->links() }}
