@@ -24,20 +24,6 @@ class EmailController extends Controller
         return view('emails.index', ['templates' => $templates]);
     }
 
-    public function send($templateId, PostmarkService $postmark)
-    {
-        // Replace with logic to pull subscribers from DB
-        $recipients = \App\Models\User::pluck('email');
-
-        foreach ($recipients as $email) {
-            $postmark->sendTemplate($templateId, $email, [
-                'name' => 'Friend', // Add custom vars if needed
-            ]);
-        }
-
-        return back()->with('success', 'Email sent!');
-    }
-
     public function show($templateId, PostmarkService $postmark)
     {
         $template = $postmark->getTemplateById($templateId);
@@ -126,10 +112,13 @@ class EmailController extends Controller
         $fromEmail     = ($recipientList === 'newsletter') ? 'newsletter@tdacvic.com' : 'events@tdacvic.com';
 
         $emails = Subscription::where('list_name', $recipientList)
-            ->where('subscribed', true)
-            ->pluck('email')
-            ->unique()
-            ->values();
+          ->where('subscribed', true)
+          ->with('user')
+          ->get()
+          ->pluck('user.email')
+          ->filter() // Remove nulls if any
+          ->unique()
+          ->values();
 
         if ($emails->isEmpty()) {
             \Log::warning('No recipients found for list', ['list_name' => $recipientList]);
