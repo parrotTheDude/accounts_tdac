@@ -11,7 +11,7 @@
     <select name="list" required class="w-full border rounded-md px-3 py-2">
       <option value="">Select a list</option>
       @foreach ($lists as $list)
-      <option value="{{ $list }}" {{ old('list') === $list ? 'selected' : '' }}>
+        <option value="{{ $list }}">{{ ucfirst($list) }}</option>
       @endforeach
     </select>
   </div>
@@ -20,10 +20,8 @@
     <div>
       <label class="block font-medium text-gray-700 mb-1">Template Variables</label>
       @foreach ($variables as $var)
-      <input type="text" name="variables[{{ $var }}]" 
-       placeholder="{{ $var }}"
-       value="{{ old('variables.' . $var) }}"
-       class="w-full border rounded-md px-3 py-2 mb-2">
+        <input type="text" name="variables[{{ $var }}]" placeholder="{{ $var }}"
+               class="w-full border rounded-md px-3 py-2 mb-2">
       @endforeach
     </div>
   @endif
