@@ -3,54 +3,60 @@
 @section('content')
   <h1 class="text-2xl font-bold text-gray-800 mb-4">{{ $template->getName() }}</h1>
 
+  @if (session('success'))
+    <div class="mb-4 text-green-600 font-medium">{{ session('success') }}</div>
+    @endif
+
+    @if ($errors->any())
+    <div class="mb-4 text-red-600 font-medium">
+        {{ $errors->first() }}
+    </div>
+    @endif
+
   <div class="bg-white shadow-md rounded-lg p-6 space-y-4">
     <p><strong>Template ID:</strong> {{ $template->getTemplateId() }}</p>
     <p><strong>Subject:</strong> {{ $template->getSubject() }}</p>
-    <p><strong>Type:</strong> {{ $template->getTemplateType() }}</p>
     <p><strong>Alias:</strong> {{ $template->getAlias() ?? '—' }}</p>
 
-    @php
-        $encodedHtml = base64_encode($template->getHtmlBody());
-    @endphp
-
-    <div class="mt-6">
-    <h2 class="text-lg font-semibold mb-2">Preview:</h2>
-
-    <div class="border border-gray-300 rounded-md overflow-hidden">
-        <iframe id="templatePreview"
-                class="w-full h-[600px] bg-white"
-                sandbox
-                frameborder="0">
-        </iframe>
+    @if (count($variables))
+    <div class="mt-8">
+        <h3 class="text-lg font-semibold mb-2">Template Variables</h3>
+        <ul class="list-disc pl-6 text-gray-700">
+        @foreach ($variables as $var)
+            <li>{{ $var }}</li>
+        @endforeach
+        </ul>
     </div>
-    </div>
+    @endif
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const iframe = document.getElementById('templatePreview');
-        const encodedHtml = "{{ $encodedHtml }}";
+    <div class="mt-10">
+    <h3 class="text-lg font-semibold mb-2">Send Test Email</h3>
 
-        const html = atob(encodedHtml); // decode base64
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-        doc.open();
-        doc.write(html);
-        doc.close();
-    });
-    </script>
-
-    <div class="mt-6 flex gap-4">
-      <form method="POST" action="{{ route('emails.sendTest', $template->getTemplateId()) }}">
+    <form action="{{ route('emails.sendTest', $template->getTemplateId()) }}" method="POST" class="space-y-4">
         @csrf
-        <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
-          Send Test Email
-        </button>
-      </form>
 
-      <a href="{{ route('emails.sendForm', $template->getTemplateId()) }}"
-         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block">
-        Send Bulk Email
-      </a>
+        <div>
+        <label class="block text-sm font-medium text-gray-700">Send to email</label>
+        <input type="email" name="to" required
+                class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2">
+        </div>
+
+        @if(count($variables))
+        <div>
+            <label class="block text-sm font-medium text-gray-700">Template Variables</label>
+            @foreach ($variables as $var)
+            <input type="text" name="variables[{{ $var }}]" placeholder="{{ $var }}"
+                    class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 mb-2">
+            @endforeach
+        </div>
+        @endif
+
+        <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+        Send Test Email
+        </button>
+    </form>
     </div>
+    
   </div>
 @endsection

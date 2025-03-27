@@ -37,6 +37,8 @@ return [
 
     'postmark' => [
         'token' => env('POSTMARK_API_TOKEN'),
+        'from_email' => env('POSTMARK_FROM_EMAIL'),
+        'message_stream' => env('POSTMARK_MESSAGE_STREAM', 'broadcast'),
     ],
 
 ];

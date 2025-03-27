@@ -33,4 +33,9 @@ class PostmarkService
     {
         return $this->client->getTemplate($templateId);
     }
+
+    public function getClient()
+    {
+        return $this->client;
+    }
 }

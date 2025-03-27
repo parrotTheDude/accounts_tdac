@@ -41,10 +41,51 @@ class EmailController extends Controller
     {
         $template = $postmark->getTemplateById($templateId);
 
-        if (!$template) {
-            abort(404, 'Template not found.');
-        }
+        // Extract variables like {{ name }} or {{ event_date }}
+        preg_match_all('/{{\s*(.*?)\s*}}/', $template->getHtmlBody(), $matches);
+        $variables = array_unique($matches[1]);
 
-        return view('emails.show', ['template' => $template]);
+        return view('emails.show', [
+            'template' => $template,
+            'variables' => $variables,
+        ]);
+    }
+
+    public function sendTest(Request $request, $templateId, PostmarkService $postmark)
+    {
+        $validated = $request->validate([
+            'to' => 'required|email',
+            'variables' => 'nullable|array',
+        ]);
+
+        $to = $validated['to'];
+        $variables = $validated['variables'] ?? [];
+
+        try {
+            // Get full template info
+            $template = $postmark->getTemplateById($templateId);
+            $templateName = $template->getName();
+
+            // Send the test email using full parameter list
+            $postmark->getClient()->sendEmailWithTemplate(
+                config('services.postmark.from_email'),
+                $to,
+                (int) $templateId,
+                $variables,
+                true,                     // TrackOpens
+                $templateName,           // TemplateAlias (optional)
+                true,                     // InlineCss
+                null, null, null, null, null,
+                'None',                   // Tag
+                null,
+                config('services.postmark.message_stream', 'outbound')
+            );
+
+
+            return back()->with('success', 'Test email sent to ' . $to);
+        } catch (\Exception $e) {
+            \Log::error('Test email failed: ' . $e->getMessage(), ['email' => $to]);
+            return back()->withErrors(['error' => 'Failed to send: ' . $e->getMessage()]);
+        }
     }
 }
