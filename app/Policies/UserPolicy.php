@@ -36,7 +36,8 @@ class UserPolicy
      */
     public function update(User $current, User $target): bool
     {
-        return User::ROLE_RANKS[$current->user_type] >= User::ROLE_RANKS[$target->user_type];
+        return $current->id === $target->id
+            || User::ROLE_RANKS[$current->user_type] >= User::ROLE_RANKS[$target->user_type];
     }
 
     /**

@@ -97,7 +97,7 @@ class User extends Authenticatable
         $ranks = self::ROLE_RANKS;
 
         return isset($ranks[$this->user_type], $ranks[$other->user_type]) &&
-            $ranks[$this->user_type] > $ranks[$other->user_type];
+            $ranks[$this->user_type] >= $ranks[$other->user_type];
     }
 
     public function isOneOf(array $roles): bool

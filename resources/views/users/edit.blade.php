@@ -23,8 +23,8 @@
   @endif
 
   <form method="POST" action="{{ route('users.update', $user->id) }}" class="space-y-6 max-w-lg">
-    @csrf
-    @method('PUT')
+  @csrf
+  @method('PUT')
 
     <!-- Name -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
