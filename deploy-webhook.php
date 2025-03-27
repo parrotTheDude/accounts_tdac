@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 file_put_contents(__DIR__ . '/hook-debug.log', "Webhook hit at " . date('c') . "\n", FILE_APPEND);
 
-$secret = 'dawec0a46e6f89e71316504c968555cce7d3818c9cf';
+$secret = 'Not so secret';
 $deployScript = __DIR__ . '/deploy.sh';
 
 $payload = file_get_contents('php://input');

@@ -162,10 +162,7 @@ class EmailController extends Controller
                 );
 
                 $sent++;
-
-                if ($sent % 10 === 0) {
-                  session(['bulk_sent' => $sent]);
-                }
+                $bulkEmail->update(['emails_sent' => $sent]);
 
             } catch (\Exception $e) {
               \Log::error("❌ Failed: {$email} — " . $e->getMessage());
@@ -177,6 +174,7 @@ class EmailController extends Controller
                       ->update(['subscribed' => false]);
               }
               $failed++;
+              $bulkEmail->update(['failed_count' => $failed]);
               \Log::info("🔕 {$email} unsubscribed from {$recipientList} due to failed delivery.");
           }
         }
