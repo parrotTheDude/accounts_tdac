@@ -4,7 +4,6 @@
 <h1 class="text-2xl font-bold text-gray-800 mb-2">User Settings</h1>
 
 <div class="flex items-center gap-2 text-gray-600 text-sm mb-6">
-  <span>{{ $user->full_name }}</span>
   <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold">
     {{ $user->role_name }}
     </span>
