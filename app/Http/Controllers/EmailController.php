@@ -9,8 +9,18 @@ class EmailController extends Controller
 {
     public function index(PostmarkService $postmark)
     {
-        $templates = $postmark->getTemplates();
-        return view('emails.index', compact('templates'));
+        $keywords = ['calendar', 'newsletter', 'teens', 'bonus', 'price'];
+
+        $templates = collect($postmark->getTemplates())->filter(function ($template) use ($keywords) {
+            foreach ($keywords as $keyword) {
+                if (str_contains(strtolower($template->getName()), $keyword)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+
+        return view('emails.index', ['templates' => $templates]);
     }
 
     public function send($templateId, PostmarkService $postmark)
