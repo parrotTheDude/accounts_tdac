@@ -1,26 +1,38 @@
 @extends('layouts.dashboard')
 
 @section('content')
-  <h1 class="text-2xl font-bold text-gray-800 mb-4">Sending in progress...</h1>
-  <p class="text-gray-600 mb-4">We’re sending your email to the <strong>{{ $list }}</strong> list.</p>
+  <h1 class="text-2xl font-bold text-gray-800 mb-4">Sending Emails...</h1>
+  <p class="mb-4 text-gray-600">Sending to the <strong>{{ $list }}</strong> list.</p>
 
-  <div id="log-output" class="bg-black text-green-300 font-mono p-4 rounded-md text-sm h-[400px] overflow-y-auto shadow-inner"></div>
+  <div class="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
+    <div id="progress-bar" class="bg-blue-600 h-full text-white text-center text-sm leading-6" style="width: 0%">
+      0%
+    </div>
+  </div>
+
+  <p class="mt-4 text-sm text-gray-500" id="status-text">Starting bulk email send...</p>
 
   <script>
-    const logEl = document.getElementById('log-output');
+    const bar = document.getElementById('progress-bar');
+    const text = document.getElementById('status-text');
 
-    async function fetchLogs() {
-      try {
-        const res = await fetch('/emails/live-log');
-        const text = await res.text();
-        logEl.innerText = text;
-        logEl.scrollTop = logEl.scrollHeight;
-      } catch (err) {
-        logEl.innerText += '\n⚠️ Error fetching logs.';
+    async function checkProgress() {
+      const res = await fetch('/emails/progress');
+      const data = await res.json();
+
+      const percent = data.total > 0 ? Math.round((data.sent / data.total) * 100) : 0;
+      bar.style.width = percent + '%';
+      bar.innerText = percent + '%';
+
+      text.innerText = `${data.sent} of ${data.total} emails sent...`;
+
+      if (percent < 100) {
+        setTimeout(checkProgress, 1000);
+      } else {
+        text.innerText = '✅ Bulk email complete!';
       }
     }
 
-    setInterval(fetchLogs, 2000);
-    fetchLogs();
+    checkProgress();
   </script>
 @endsection

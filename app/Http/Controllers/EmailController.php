@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\PostmarkService;
 use App\Models\Subscription;
-use App\Jobs\SendBulkEmailJob;
 
 class EmailController extends Controller
 {
@@ -120,28 +119,62 @@ class EmailController extends Controller
             return back()->withErrors(['password' => 'Incorrect password. Bulk email not sent.']);
         }
 
-        // ✅ All good — dispatch the job to send in the background
-        dispatch(new \App\Jobs\SendBulkEmailJob(
-            $templateId,
-            $validated['list'],
-            $validated['variables'] ?? [],
-            auth()->user()->id
-        ));
+        $recipientList = $validated['list'];
+        $variables     = $validated['variables'] ?? [];
+
+        $messageStream = ($recipientList === 'newsletter') ? 'newsletter' : 'bonus-event';
+        $fromEmail     = ($recipientList === 'newsletter') ? 'newsletter@tdacvic.com' : 'events@tdacvic.com';
+
+        $emails = Subscription::where('list_name', $recipientList)
+            ->where('subscribed', true)
+            ->pluck('email')
+            ->unique()
+            ->values();
+
+        if ($emails->isEmpty()) {
+            \Log::warning('No recipients found for list', ['list_name' => $recipientList]);
+            return back()->withErrors(['error' => 'No recipients found for this list.']);
+        }
+
+        $template = $postmark->getTemplateById($templateId);
+        $templateName = $template->getName();
+
+        $total = $emails->count();
+        session(['bulk_sent' => 0, 'bulk_total' => $total]);
+
+        $sent = 0;
+
+        foreach ($emails as $email) {
+            try {
+                $postmark->sendEmail(
+                    $templateId,
+                    $email,
+                    $variables,
+                    $fromEmail,
+                    $templateName,
+                    $messageStream
+                );
+
+                $sent++;
+                session(['bulk_sent' => $sent]);
+            } catch (\Exception $e) {
+                \Log::error("Bulk email failed for {$email}: " . $e->getMessage());
+            }
+        }
+
+        // Reset progress session
+        session(['bulk_sent' => $total]);
 
         return view('emails.bulk-in-progress', [
-            'list' => $validated['list'],
+            'list' => $recipientList
         ]);
     }
 
-    public function liveLog()
+    public function bulkProgress()
     {
-        $logPath = storage_path('logs/laravel.log');
-
-        if (!file_exists($logPath)) {
-            return response('Log file not found.', 404);
-        }
-
-        $lines = array_slice(file($logPath), -100); // Last 100 lines
-        return response(implode('', $lines), 200, ['Content-Type' => 'text/plain']);
+        return response()->json([
+            'sent' => session('bulk_sent', 0),
+            'total' => session('bulk_total', 0),
+        ]);
     }
 }
