@@ -50,11 +50,15 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $lists = Subscription::select('list_name')
-            ->distinct()
-            ->pluck('list_name');
+        $this->authorize('update', $user);
 
-        return view('users.edit', compact('user', 'lists'));
+        // Get distinct subscription list names from the DB
+        $lists = \App\Models\Subscription::distinct()->pluck('list_name');
+
+        // Get current subscriptions for the user
+        $subscriptions = $user->subscriptions;
+
+        return view('users.edit', compact('user', 'lists', 'subscriptions'));
     }
 
     public function update(Request $request, User $user)
