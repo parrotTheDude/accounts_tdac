@@ -85,7 +85,24 @@ class UserController extends Controller
             $user->update(['password' => \Hash::make($validated['password'])]);
         }
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        // First, get all known list names to avoid adding new unintended ones
+        $validLists = \App\Models\Subscription::distinct()->pluck('list_name')->toArray();
+
+        // Get selected subscriptions from form
+        $selected = $request->input('subscriptions', []);
+
+        // Loop through all valid lists
+        foreach ($validLists as $listName) {
+            $isSubscribed = in_array($listName, $selected);
+
+            // Update or create subscription entry
+            \App\Models\Subscription::updateOrCreate(
+                ['user_id' => $user->id, 'list_name' => $listName],
+                ['subscribed' => $isSubscribed]
+            );
+        }
+
+        return redirect()->route('users.edit', $user->id)->with('success', 'User updated!');
     }
 
     public function updateSubscriptions(Request $request, User $user)
