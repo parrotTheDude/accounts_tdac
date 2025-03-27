@@ -29,7 +29,7 @@ class PostmarkService
 
     public function getTemplateById($templateId)
     {
-        return $this->client->getTemplate($templateId);
+        return $this->client->getTemplate((int) $templateId);
     }
 
     public function getClient()
