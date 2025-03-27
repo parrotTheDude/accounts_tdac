@@ -15,26 +15,29 @@ class EmailVerificationController extends Controller
     {
         $user = $request->user();
 
-        // Delete any existing token for this user
+        if ($user->hasVerifiedEmail()) {
+            return back()->with('success', 'Email is already verified.');
+        }
+
+        // Clear old tokens
         VerificationToken::where('user_id', $user->id)->delete();
 
-        // Generate a secure token
-        $token = Str::upper(Str::random(6));
-
-        // Save to DB
-        VerificationToken::create([
-            'user_id'    => $user->id,
-            'token'      => $token,
+        $token = VerificationToken::create([
+            'user_id' => $user->id,
+            'token' => Str::random(6),
             'expires_at' => now()->addHour(),
         ]);
 
-        // Build the URL (adjust path as needed)
-        $url = url("/verify-email?token={$token}&email=" . urlencode($user->email));
+        $verificationUrl = route('verification.verify', $token->token);
 
-        // Send via Postmark
-        $postmark->sendVerificationEmail($user->email, $url);
+        $postmark->sendEmail(
+            templateId: 39165532,
+            to: $user->email,
+            variables: ['accountCreationUrl' => $verificationUrl],
+            stream: 'admin'
+        );
 
-        return back()->with('success', 'Verification email sent to ' . $user->email);
+        return back()->with('success', 'Verification email sent!');
     }
 
     public function verify(Request $request)

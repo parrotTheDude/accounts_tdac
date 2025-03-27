@@ -7,6 +7,7 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BulkEmailController;
+use App\Http\Controllers\EmailVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,4 +67,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('{templateId}/send-test', [EmailController::class, 'sendTest'])->name('sendTest');
         });
     });
+
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
 });
