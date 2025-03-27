@@ -39,12 +39,7 @@ class EmailController extends Controller
 
     public function show($templateId, PostmarkService $postmark)
     {
-        $templates = $postmark->getTemplates();
-
-        // Find the one with the matching ID
-        $template = collect($templates)->firstWhere(function ($t) use ($templateId) {
-            return $t->getTemplateId() == $templateId;
-        });
+        $template = $postmark->getTemplateById($templateId);
 
         if (!$template) {
             abort(404, 'Template not found.');

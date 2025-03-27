@@ -5,20 +5,20 @@
 
   <div class="bg-white shadow-md rounded-lg p-6">
     @if(count($templates))
-      <ul class="divide-y divide-gray-200">
-      @foreach ($templates as $template)
-        <li class="py-4 flex justify-between items-center">
+      <div class="space-y-4">
+        @foreach ($templates as $template)
+          <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition flex items-center justify-between">
             <div>
-            <h2 class="font-semibold text-gray-800">{{ $template->getName() }}</h2>
-            <p class="text-gray-500 text-sm">Template ID: {{ $template->getTemplateId() }}</p>
+              <h2 class="text-lg font-semibold text-gray-800">{{ $template->getName() }}</h2>
+              <p class="text-sm text-gray-500">Template ID: {{ $template->getTemplateId() }}</p>
             </div>
             <a href="{{ route('emails.show', $template->getTemplateId()) }}"
-            class="text-blue-600 hover:underline font-medium">
-            Select
+               class="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow">
+              View Template
             </a>
-        </li>
+          </div>
         @endforeach
-      </ul>
+      </div>
     @else
       <p class="text-gray-500">No templates found in Postmark.</p>
     @endif

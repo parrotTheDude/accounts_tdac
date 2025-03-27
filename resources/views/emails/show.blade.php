@@ -10,10 +10,12 @@
     <p><strong>Alias:</strong> {{ $template->getAlias() ?? '—' }}</p>
 
     <div class="mt-6">
-      <h2 class="text-lg font-semibold mb-2">Preview:</h2>
-      <iframe src="https://postmarkapp.com/servers/YOUR_SERVER_ID/templates/{{ $template->getTemplateId() }}/preview"
-              class="w-full h-[500px] border rounded-md"
-              frameborder="0"></iframe>
+    <h2 class="text-lg font-semibold mb-2">Preview:</h2>
+    <div class="border border-gray-300 rounded-md overflow-auto bg-white shadow">
+        <div class="p-4 prose max-w-none">
+        {!! $template->getHtmlBody() !!}
+        </div>
+    </div>
     </div>
 
     <div class="mt-6 flex gap-4">

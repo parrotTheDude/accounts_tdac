@@ -28,4 +28,9 @@ class PostmarkService
             $templateModel
         );
     }
+
+    public function getTemplateById($templateId)
+    {
+        return $this->client->getTemplate($templateId);
+    }
 }
