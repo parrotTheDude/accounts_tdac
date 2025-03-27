@@ -29,7 +29,7 @@ class PostmarkService
         return $this->client;
     }
 
-    public function sendTestEmail($templateId, $to, $variables = [], $from = null, $alias = null, $stream = null)
+    public function sendEmail($templateId, $to, $variables = [], $from = null, $alias = null, $stream = null)
     {
         $template = $this->getTemplateById($templateId);
 
@@ -44,7 +44,7 @@ class PostmarkService
             null, null, null, null, null,
             'None',
             null,
-            $stream ?? config('services.postmark.message_stream', 'broadcast')
+            $stream ?? config('services.postmark.message_stream', 'outbound')
         );
     }
 }

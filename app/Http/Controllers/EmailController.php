@@ -65,7 +65,7 @@ class EmailController extends Controller
         ]);
 
         try {
-            $postmark->sendTestEmail(
+            $postmark->sendEmail(
                 $templateId,
                 $validated['to'],
                 $validated['variables'] ?? []
@@ -151,7 +151,7 @@ class EmailController extends Controller
         foreach ($emails->chunk($batchSize) as $batch) {
             foreach ($batch as $email) {
                 try {
-                    $postmark->sendTestEmail(
+                    $postmark->sendEmail(
                         $templateId,
                         $email,
                         $variables,
