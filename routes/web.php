@@ -30,3 +30,4 @@ Route::post('/emails/send/{templateId}', [EmailController::class, 'send'])->midd
 Route::get('/emails/{templateId}', [EmailController::class, 'show'])->name('emails.show')->middleware('auth');
 Route::post('/emails/{templateId}/send-test', [EmailController::class, 'sendTest'])->name('emails.sendTest');
 Route::get('/emails/{templateId}/send', [EmailController::class, 'sendForm'])->name('emails.sendForm');
+Route::post('/emails/{templateId}/send', [EmailController::class, 'sendBulk'])->name('emails.sendBulk');

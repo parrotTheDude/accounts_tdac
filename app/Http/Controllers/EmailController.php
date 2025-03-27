@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\PostmarkService;
+use App\Models\Subscription;
 
 class EmailController extends Controller
 {
@@ -63,34 +64,109 @@ class EmailController extends Controller
             'variables' => 'nullable|array',
         ]);
 
-        $to = $validated['to'];
-        $variables = $validated['variables'] ?? [];
-
         try {
-            // Get full template info
-            $template = $postmark->getTemplateById($templateId);
-            $templateName = $template->getName();
-
-            // Send the test email using full parameter list
-            $postmark->getClient()->sendEmailWithTemplate(
-                config('services.postmark.from_email'),
-                $to,
-                (int) $templateId,
-                $variables,
-                true,                     // TrackOpens
-                $templateName,           // TemplateAlias (optional)
-                true,                     // InlineCss
-                null, null, null, null, null,
-                'None',                   // Tag
-                null,
-                config('services.postmark.message_stream', 'outbound')
+            $postmark->sendTestEmail(
+                $templateId,
+                $validated['to'],
+                $validated['variables'] ?? []
             );
 
+            return back()->with('success', "Test email sent to {$validated['to']}");
 
-            return back()->with('success', 'Test email sent to ' . $to);
         } catch (\Exception $e) {
-            \Log::error('Test email failed: ' . $e->getMessage(), ['email' => $to]);
+            \Log::error('Test email failed', [
+                'to' => $validated['to'],
+                'error' => $e->getMessage()
+            ]);
+
             return back()->withErrors(['error' => 'Failed to send: ' . $e->getMessage()]);
         }
+    }
+
+    public function sendForm($templateId, PostmarkService $postmark)
+    {
+        $template = $postmark->getTemplateById($templateId);
+
+        // Get all unique subscription lists from DB
+        $lists = \App\Models\Subscription::select('list_name')
+            ->where('subscribed', true)
+            ->distinct()
+            ->pluck('list_name');
+
+        // Extract variables like before
+        preg_match_all('/{{\s*(.*?)\s*}}/', $template->getHtmlBody(), $matches);
+        $variables = collect($matches[1])
+            ->unique()
+            ->filter(fn($var) => !str_contains(strtolower($var), 'unsubscribe'))
+            ->values();
+
+        return view('emails.send-form', [
+            'template' => $template,
+            'lists' => $lists,
+            'variables' => $variables,
+        ]);
+    }
+
+    public function sendBulk(Request $request, $templateId, PostmarkService $postmark)
+    {
+        $validated = $request->validate([
+            'list'       => 'required|string',
+            'variables'  => 'nullable|array',
+            'password'   => 'required|string',
+        ]);
+
+        // ✅ Confirm password
+        if (!\Hash::check($validated['password'], auth()->user()->password)) {
+            return back()->withErrors(['password' => 'Incorrect password. Bulk email not sent.']);
+        }
+
+        $recipientList = $validated['list'];
+        $variables     = $validated['variables'] ?? [];
+
+        // ✅ Determine sender + stream based on list
+        $messageStream = ($recipientList === 'newsletter') ? 'newsletter' : 'bonus-event';
+        $fromEmail     = ($recipientList === 'newsletter') ? 'newsletter@tdacvic.com' : 'events@tdacvic.com';
+
+        // ✅ Fetch recipients (based on your DB structure)
+        $emails = Subscription::where('list_name', $recipientList)
+            ->where('subscribed', true)
+            ->with('user')
+            ->get()
+            ->pluck('user.email')
+            ->unique()
+            ->values();
+
+        if ($emails->isEmpty()) {
+            \Log::warning('No recipients found for list', ['list_name' => $recipientList]);
+            return back()->withErrors(['error' => 'No recipients found for this list.']);
+        }
+
+        // ✅ Fetch template name from Postmark
+        $template = $postmark->getTemplateById($templateId);
+        $templateName = $template->getName();
+
+        $totalSent = 0;
+        $batchSize = 500;
+
+        foreach ($emails->chunk($batchSize) as $batch) {
+            foreach ($batch as $email) {
+                try {
+                    $postmark->sendTestEmail(
+                        $templateId,
+                        $email,
+                        $variables,
+                        $fromEmail,
+                        $templateName,
+                        $messageStream
+                    );
+
+                    $totalSent++;
+                } catch (\Exception $e) {
+                    \Log::error("Bulk email failed for {$email}: {$e->getMessage()}");
+                }
+            }
+        }
+
+        return redirect()->route('emails.index')->with('success', "Bulk email sent to {$totalSent} recipients.");
     }
 }
