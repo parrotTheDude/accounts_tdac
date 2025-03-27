@@ -10,9 +10,11 @@
 
   <!-- Top nav -->
   <nav class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-    <div class="text-xl font-bold text-blue-600">TDAC</div>
+    <div class="flex items-center">
+      <img src="https://thatdisabilityadventurecompany.com.au/icons/logo.webp" alt="TDAC Logo" class="h-10">
+    </div>
     <div class="flex items-center gap-4">
-      <span class="text-sm text-gray-600">{{ Auth::user()->name }} ({{ Auth::user()->user_type }})</span>
+      <span class="text-sm text-gray-600">{{ Auth::user()->name }}</span>
       <form method="POST" action="{{ route('logout') }}">
         @csrf
         <button class="text-red-600 hover:underline text-sm" type="submit">Logout</button>
@@ -24,9 +26,30 @@
     <!-- Sidebar -->
     <aside class="w-64 bg-white h-screen p-6 shadow-md">
       <ul class="space-y-4">
-        <li><a href="/dashboard" class="text-blue-600 font-medium hover:underline">Dashboard</a></li>
-        <li><a href="#" class="text-gray-700 hover:text-blue-500">Users</a></li>
-        <li><a href="#" class="text-gray-700 hover:text-blue-500">Settings</a></li>
+        <li>
+          <a href="/dashboard" class="flex items-center text-gray-700 hover:text-blue-600">
+            <img src="{{ asset('icons/home.svg') }}" alt="Dashboard" class="w-5 h-5 mr-2">
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="/users" class="flex items-center text-gray-700 hover:text-blue-600">
+            <img src="{{ asset('icons/team.svg') }}" alt="Users" class="w-5 h-5 mr-2">
+            Users
+          </a>
+        </li>
+        <li>
+          <a href="/subscriptions" class="flex items-center text-gray-700 hover:text-blue-600">
+            <img src="{{ asset('icons/ticket.svg') }}" alt="Subscriptions" class="w-5 h-5 mr-2">
+            Subscriptions
+          </a>
+        </li>
+        <li>
+          <a href="/emails" class="flex items-center text-gray-700 hover:text-blue-600">
+            <img src="{{ asset('icons/email.svg') }}" alt="Emails" class="w-5 h-5 mr-2">
+            Emails
+          </a>
+        </li>
       </ul>
     </aside>
 
