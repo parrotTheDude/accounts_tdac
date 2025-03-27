@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\EmailController;
 
 Route::get('/', fn() => view('landing'))->name('home'); // or your custom landing
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -23,3 +24,6 @@ Route::get('/subscriptions', function () {
 Route::get('/emails', function () {
     return view('emails.index');
 })->middleware('auth');
+
+Route::get('/emails', [EmailController::class, 'index'])->middleware('auth');
+Route::post('/emails/send/{templateId}', [EmailController::class, 'send'])->middleware('auth');
