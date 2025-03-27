@@ -12,24 +12,38 @@
 
   <p class="mt-4 text-sm text-gray-500" id="status-text">Starting bulk email send...</p>
 
+  <!-- Return Button (hidden by default) -->
+  <div id="back-button" class="mt-6 hidden">
+    <a href="{{ route('emails.index') }}"
+       class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow text-sm font-medium">
+      ⬅️ Back to Email Templates
+    </a>
+  </div>
+
   <script>
     const bar = document.getElementById('progress-bar');
     const text = document.getElementById('status-text');
+    const backBtn = document.getElementById('back-button');
 
     async function checkProgress() {
-      const res = await fetch('/emails/progress');
-      const data = await res.json();
+      try {
+        const res = await fetch('/emails/progress');
+        const data = await res.json();
 
-      const percent = data.total > 0 ? Math.round((data.sent / data.total) * 100) : 0;
-      bar.style.width = percent + '%';
-      bar.innerText = percent + '%';
+        const percent = data.total > 0 ? Math.round((data.sent / data.total) * 100) : 0;
+        bar.style.width = percent + '%';
+        bar.innerText = percent + '%';
 
-      text.innerText = `${data.sent} of ${data.total} emails sent...`;
+        text.innerText = `${data.sent} of ${data.total} emails sent...`;
 
-      if (percent < 100) {
-        setTimeout(checkProgress, 1000);
-      } else {
-        text.innerText = '✅ Bulk email complete!';
+        if (percent < 100) {
+          setTimeout(checkProgress, 1000);
+        } else {
+          text.innerText = '✅ Bulk email complete!';
+          backBtn.classList.remove('hidden');
+        }
+      } catch (err) {
+        text.innerText = '⚠️ Failed to fetch progress. Try reloading.';
       }
     }
 

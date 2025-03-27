@@ -10,13 +10,21 @@ class PostmarkService
 
     public function __construct()
     {
-        $this->client = new PostmarkClient(config('services.postmark.token'));
+        $token = config('services.postmark.token');
+
+        if (!$token) {
+            throw new \RuntimeException('Postmark token not configured.');
+        }
+
+        $this->client = new PostmarkClient($token);
     }
 
     public function getTemplates()
     {
-        $response = $this->client->listTemplates();
-        return $response->Templates ?? [];
+        return cache()->remember('postmark_templates', 60, function () {
+            $response = $this->client->listTemplates();
+            return $response->Templates ?? [];
+        });
     }
 
     public function getTemplateById($templateId)

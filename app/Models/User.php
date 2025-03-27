@@ -9,6 +9,12 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    const ROLES = [
+        'admin' => 'Administrator',
+        'master' => 'Master Admin',
+        'superadmin' => 'Super Admin',
+        'user' => 'Standard User',
+    ];
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -19,8 +25,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
+        'user_type',
+        'gender',
     ];
 
     /**
@@ -44,5 +53,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return "{$this->name} {$this->last_name}";
+    }
+
+    public function getRoleNameAttribute()
+    {
+        return self::ROLES[$this->user_type] ?? 'Unknown';
+    }
+
+    public function isAdmin()
+    {
+        return in_array($this->user_type, ['admin', 'master', 'superadmin']);
     }
 }
