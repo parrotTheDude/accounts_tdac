@@ -79,6 +79,22 @@
     </div>
   </form>
 
+  @if ($subscriptions->count())
+  <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4">🗂️ Subscriptions</h2>
+    <ul class="divide-y divide-gray-200 text-sm">
+      @foreach ($subscriptions as $sub)
+        <li class="py-2 flex justify-between items-center">
+          <span>{{ ucfirst($sub->list_name) }}</span>
+          <span class="{{ $sub->subscribed ? 'text-green-600' : 'text-red-600' }}">
+            {{ $sub->subscribed ? 'Subscribed' : 'Unsubscribed' }}
+          </span>
+        </li>
+      @endforeach
+    </ul>
+  </div>
+@endif
+
   <script>
   const roleSelect = document.getElementById('user-role');
   const participantSection = document.getElementById('participant-type-section');

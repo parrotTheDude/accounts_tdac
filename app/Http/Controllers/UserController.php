@@ -49,7 +49,9 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('users.edit', compact('user'));
+        $subscriptions = $user->subscriptions()->get();
+
+        return view('users.edit', compact('user', 'subscriptions'));
     }
 
     public function update(Request $request, User $user)
