@@ -32,33 +32,30 @@
   </div>
 
   <div>
-    <label class="block font-medium text-gray-700 mb-1">Gender</label>
-    <select name="gender" class="w-full border rounded-md px-3 py-2">
-      <option value="">-- Select Gender --</option>
-      @foreach (['male', 'female', 'nonbinary', 'other'] as $gender)
-        <option value="{{ $gender }}" {{ $user->gender === $gender ? 'selected' : '' }}>
-          {{ ucfirst($gender) }}
-        </option>
-      @endforeach
-    </select>
-  </div>
+    <label class="block font-medium text-gray-700 mb-1 flex items-center gap-2">
+        Email
+        @if ($user->email_verified_at)
+        <img src="{{ asset('icons/correct.svg') }}" alt="Verified" class="w-4 h-4">
+        @else
+        <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">Unverified</span>
+        @endif
+    </label>
 
-  <div>
-    <label class="block font-medium text-gray-700 mb-1">Email</label>
-    <input type="email" value="{{ $user->email }}" disabled
-           class="w-full bg-gray-100 border rounded-md px-3 py-2 cursor-not-allowed">
-  </div>
+    <div class="flex items-center gap-4">
+        <input type="email" value="{{ $user->email }}" disabled
+            class="w-full bg-gray-100 border rounded-md px-3 py-2 cursor-not-allowed">
 
-  <div>
-    <label class="block font-medium text-gray-700 mb-1">New Password</label>
-    <input type="password" name="password" class="w-full border rounded-md px-3 py-2">
-    <p class="text-sm text-gray-500 mt-1">Leave blank to keep current password</p>
-  </div>
-
-  <div>
-    <label class="block font-medium text-gray-700 mb-1">Confirm Password</label>
-    <input type="password" name="password_confirmation" class="w-full border rounded-md px-3 py-2">
-  </div>
+        @if (!$user->email_verified_at)
+        <form action="{{ route('verification.send') }}" method="POST">
+            @csrf
+            <button type="submit"
+                    class="text-sm text-blue-600 hover:underline">
+            Verify Email
+            </button>
+        </form>
+        @endif
+    </div>
+    </div>
 
   <button type="submit"
           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
