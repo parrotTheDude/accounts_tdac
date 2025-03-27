@@ -18,6 +18,20 @@ class User extends Authenticatable
         'parent' => 'Parent',
         'external' => 'External',
     ];
+
+    // Rank for permission comparison
+    const ROLE_RANKS = [
+        'master' => 3,
+        'superadmin' => 2,
+        'admin' => 1,
+        'staff' => 0,
+        'participant' => -1,
+        'parent' => -2,
+        'external' => -3,
+    ];
+
+    const ADMIN_ROLES = ['admin', 'superadmin', 'master'];
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -75,6 +89,24 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return in_array($this->user_type, ['admin', 'master', 'superadmin']);
+        return in_array($this->user_type, self::ADMIN_ROLES);
+    }
+
+    public function canEdit(User $other): bool
+    {
+        $ranks = self::ROLE_RANKS;
+
+        return isset($ranks[$this->user_type], $ranks[$other->user_type]) &&
+            $ranks[$this->user_type] > $ranks[$other->user_type];
+    }
+
+    public function isOneOf(array $roles): bool
+    {
+        return in_array($this->user_type, $roles);
+    }
+
+    public function rank(): int
+    {
+        return self::ROLE_RANKS[$this->user_type] ?? -99;
     }
 }
