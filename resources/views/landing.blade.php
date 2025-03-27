@@ -9,9 +9,6 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen m-0">
   <div class="bg-white p-10 rounded-2xl shadow-md text-center max-w-md w-full">
     <h1 class="text-2xl font-bold text-gray-800 mb-4">Welcome to TDAC Accounts</h1>
-    <p class="text-gray-600 mb-6">
-      This is the future home of account management for That Disability Adventure Company.
-    </p>
 
     @auth
       <p class="text-green-600 font-semibold mb-4">
