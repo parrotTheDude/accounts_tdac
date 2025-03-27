@@ -3,6 +3,13 @@
 @section('content')
   <h1 class="text-2xl font-bold text-gray-800 mb-6">🛠️ Edit User: {{ $user->full_name }}</h1>
 
+  <span class="inline-block text-xs font-semibold px-2 py-1 rounded 
+    {{ $user->user_type === 'master' ? 'bg-purple-100 text-purple-700' :
+      ($user->user_type === 'superadmin' ? 'bg-red-100 text-red-700' :
+      ($user->user_type === 'admin' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700')) }}">
+    {{ ucfirst($user->user_type) }}
+  </span>
+
   @if (session('success'))
     <div class="mb-4 text-green-700 bg-green-100 border border-green-300 px-4 py-3 rounded shadow-sm">
       ✅ {{ session('success') }}
@@ -34,11 +41,35 @@
       </div>
     </div>
 
-    <!-- Email -->
+    <!-- Email (with verification status) -->
     <div>
-      <label class="block font-medium text-gray-700 mb-1">Email</label>
+      <label class="block font-medium text-gray-700 mb-1 flex items-center gap-2">
+        Email
+
+        @if ($user->hasVerifiedEmail())
+          <span class="flex items-center text-green-600 text-sm">
+            <img src="{{ asset('icons/correct.svg') }}" class="w-4 h-4 mr-1" alt="Verified">
+            Verified
+          </span>
+        @else
+          <span class="flex items-center text-red-600 text-sm gap-2">
+            Not Verified
+
+            @can('resend-verification')
+              <form method="POST" action="{{ route('verification.send') }}">
+                @csrf
+                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                <button type="submit" class="text-xs text-blue-600 hover:underline">
+                  Resend
+                </button>
+              </form>
+            @endcan
+          </span>
+        @endif
+      </label>
+
       <input type="email" value="{{ $user->email }}" disabled
-             class="w-full border bg-gray-100 px-3 py-2 cursor-not-allowed">
+            class="w-full border bg-gray-100 px-3 py-2 cursor-not-allowed">
     </div>
 
     <!-- Role (restrict options based on current user rank) -->
