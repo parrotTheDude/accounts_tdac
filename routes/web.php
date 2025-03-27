@@ -11,3 +11,15 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/dashboard', function () {
     return view('dashboard'); // create this view next
 })->middleware('auth');
+
+Route::get('/users', function () {
+    return view('users.index');
+})->middleware('auth');
+
+Route::get('/subscriptions', function () {
+    return view('subscriptions.index');
+})->middleware('auth');
+
+Route::get('/emails', function () {
+    return view('emails.index');
+})->middleware('auth');
