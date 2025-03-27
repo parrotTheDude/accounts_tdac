@@ -10,7 +10,7 @@ class PostmarkService
 
     public function __construct()
     {
-        $this->client = new PostmarkClient(env('POSTMARK_API_TOKEN'));
+        $this->client = new PostmarkClient(config('services.postmark.token'));
     }
 
     public function getTemplates()

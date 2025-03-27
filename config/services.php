@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'postmark' => [
+        'token' => env('POSTMARK_API_TOKEN'),
+    ],
+
 ];
