@@ -4,32 +4,34 @@
 <h1 class="text-2xl font-bold text-gray-800 mb-6">👥 Users</h1>
 
 <!-- Filter Bar -->
-<form method="GET" action="{{ route('users.index') }}" class="flex flex-wrap gap-4 items-center mb-6">
-  <input type="text" name="search" value="{{ request('search') }}"
-         placeholder="Search name or email"
-         class="px-3 py-2 border border-gray-300 rounded-md w-64">
+<div class="flex flex-wrap items-center gap-4 mb-6">
+  <form method="GET" action="{{ route('users.index') }}" class="flex flex-wrap items-center gap-4">
+    <input type="text" name="search" value="{{ request('search') }}"
+           placeholder="Search name or email"
+           class="px-3 py-2 border border-gray-300 rounded-md w-64">
 
-  <select name="role" class="px-3 py-2 border border-gray-300 rounded-md">
-    <option value="">All Roles</option>
-    @foreach (auth()->user()->getAvailableRoles() as $value => $label)
-      <option value="{{ $value }}" {{ request('role') === $value ? 'selected' : '' }}>
-        {{ $label }}
-      </option>
-    @endforeach
-  </select>
+    <select name="role" class="px-3 py-2 border border-gray-300 rounded-md">
+      <option value="">All Roles</option>
+      @foreach (auth()->user()->getAvailableRoles() as $value => $label)
+        <option value="{{ $value }}" {{ request('role') === $value ? 'selected' : '' }}>
+          {{ $label }}
+        </option>
+      @endforeach
+    </select>
 
-  <button type="submit"
-          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
-    Filter
-  </button>
-</form>
+    <button type="submit"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+      Filter
+    </button>
+  </form>
 
   @if(request()->has('search') || request()->has('role'))
-  <a href="{{ route('users.index') }}"
-    class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md text-sm">
-    Reset Filters
-  </a>
+    <a href="{{ route('users.index') }}"
+       class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md text-sm">
+      Reset Filters
+    </a>
   @endif
+</div>
 
 <!-- Users Table -->
 <table class="w-full bg-white rounded-lg shadow overflow-hidden">
