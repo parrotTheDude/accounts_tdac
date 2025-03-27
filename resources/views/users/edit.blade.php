@@ -45,27 +45,18 @@
     <div>
       <label class="block font-medium text-gray-700 mb-1 flex items-center gap-2">
         Email
-
-        @if ($user->hasVerifiedEmail())
-          <span class="flex items-center text-green-600 text-sm">
-            <img src="{{ asset('icons/correct.svg') }}" class="w-4 h-4 mr-1" alt="Verified">
-            Verified
-          </span>
-        @else
-          <span class="flex items-center text-red-600 text-sm gap-2">
-            Not Verified
-
-            @can('resend-verification')
-              <form method="POST" action="{{ route('verification.send') }}">
-                @csrf
-                <input type="hidden" name="user_id" value="{{ $user->id }}">
-                <button type="submit" class="text-xs text-blue-600 hover:underline">
-                  Resend
-                </button>
-              </form>
-            @endcan
-          </span>
-        @endif
+        <span class="inline-block w-24">
+          @if ($user->hasVerifiedEmail())
+            <img src="{{ asset('icons/correct.svg') }}" alt="Verified" class="w-4 h-4 inline-block">
+          @else
+            <form action="{{ route('verification.send') }}" method="POST" class="inline">
+              @csrf
+              <button type="submit" class="text-sm text-blue-600 hover:underline">
+                Verify Email
+              </button>
+            </form>
+          @endif
+        </span>
       </label>
 
       <input type="email" value="{{ $user->email }}" disabled

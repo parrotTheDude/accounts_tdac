@@ -55,4 +55,21 @@ class PostmarkService
             $stream ?? config('services.postmark.message_stream', 'outbound')
         );
     }
+
+    public function sendVerificationEmail(string $to, string $verificationUrl)
+    {
+        return $this->client->sendEmailWithTemplate(
+            config('services.postmark.from_email'), // from
+            $to,                                    // to
+            39165532,                               // template_id
+            ['accountCreationUrl' => $verificationUrl], // template variables
+            true,                                   // track opens
+            null,                                   // alias (optional)
+            true,                                   // inline css
+            null, null, null, null, null,
+            'Verification',                         // tag
+            null,
+            'admin'                                 // message stream
+        );
+    }
 }

@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -36,6 +36,10 @@ return [
     */
 
     'mailers' => [
+
+        'postmark' => [
+            'transport' => 'postmark',
+        ],
 
         'smtp' => [
             'transport' => 'smtp',
@@ -109,8 +113,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('POSTMARK_FROM_EMAIL', 'hello@tdacvic.com'),
+        'name' => env('MAIL_FROM_NAME', 'TDAC Accounts'),
     ],
 
 ];

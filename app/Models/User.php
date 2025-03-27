@@ -118,4 +118,15 @@ class User extends Authenticatable
             return self::ROLE_RANKS[$role] <= $currentRank;
         });
     }
+
+    public function verificationToken()
+    {
+        return $this->hasOne(VerificationToken::class);
+    }
+
+    public function markEmailAsVerified()
+    {
+        $this->email_verified_at = now();
+        return $this->save();
+    }
 }
