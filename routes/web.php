@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,4 +50,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('/settings', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
+
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
 });
