@@ -16,7 +16,7 @@ class PostmarkService
     public function getTemplates()
     {
         $response = $this->client->listTemplates();
-        return $response['Templates'] ?? [];
+        return $response->Templates ?? [];
     }
 
     public function sendTemplate($templateId, $to, $templateModel = [])
