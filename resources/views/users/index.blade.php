@@ -11,7 +11,7 @@
 
   <select name="role" class="px-3 py-2 border border-gray-300 rounded-md">
     <option value="">All Roles</option>
-    @foreach (\App\Models\User::ROLES as $value => $label)
+    @foreach (auth()->user()->getAvailableRoles() as $value => $label)
       <option value="{{ $value }}" {{ request('role') === $value ? 'selected' : '' }}>
         {{ $label }}
       </option>
