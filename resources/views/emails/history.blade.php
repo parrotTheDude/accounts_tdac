@@ -3,6 +3,11 @@
 @section('content')
   <h1 class="text-2xl font-bold text-gray-800 mb-6">📜 Bulk Email History</h1>
 
+  <a href="{{ route('emails.index') }}"
+   class="inline-block mb-4 bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-md text-sm font-medium shadow-sm">
+  ⬅️ Back to Templates
+</a>
+
   <table class="w-full bg-white rounded-lg shadow overflow-hidden">
     <thead class="bg-gray-100 text-left text-sm text-gray-700">
       <tr>
