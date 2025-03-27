@@ -4,9 +4,9 @@
   <h1 class="text-2xl font-bold text-gray-800 mb-6">Email Templates</h1>
 
   <a href="{{ route('emails.history') }}"
-    class="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow">
-    📜 View Bulk Email History
-  </a>
+   class="inline-block mb-6 mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow">
+   📜 View Bulk Email History
+</a>
 
   <div class="bg-white shadow-md rounded-lg p-6">
     @if(count($templates))
