@@ -108,7 +108,7 @@
       @endforeach
     </div>
     </div> <!-- End Subscriptions section -->
-  </form>
+
 @if ($subscriptions->count())
   <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
     <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
@@ -138,6 +138,8 @@
       💾 Save Changes
     </button>
   </div>
+
+  </form>
 
   <script>
   const roleSelect = document.getElementById('user-role');
