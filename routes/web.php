@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +41,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('{templateId}/send', [EmailController::class, 'sendBulk'])->name('sendBulk');
         Route::post('{templateId}/send-test', [EmailController::class, 'sendTest'])->name('sendTest');
     });
+
+    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'edit'])->name('settings.edit');
+    Route::post('/settings', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
 });
