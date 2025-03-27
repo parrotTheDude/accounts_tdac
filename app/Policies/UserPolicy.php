@@ -34,9 +34,9 @@ class UserPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, User $model): bool
+    public function update(User $current, User $target): bool
     {
-        return false;
+        return User::ROLE_RANKS[$current->user_type] >= User::ROLE_RANKS[$target->user_type];
     }
 
     /**
