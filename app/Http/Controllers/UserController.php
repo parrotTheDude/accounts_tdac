@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Subscription;
 
 class UserController extends Controller
 {
@@ -49,9 +50,11 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $subscriptions = $user->subscriptions()->get();
+        $lists = Subscription::select('list_name')
+            ->distinct()
+            ->pluck('list_name');
 
-        return view('users.edit', compact('user', 'subscriptions'));
+        return view('users.edit', compact('user', 'lists'));
     }
 
     public function update(Request $request, User $user)
