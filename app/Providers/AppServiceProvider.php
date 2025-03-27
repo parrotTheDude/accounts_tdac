@@ -17,16 +17,11 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    protected $policies = [
-        User::class => UserPolicy::class,
-    ];
-
     /**
      * Bootstrap any application services.
      */
     public function boot(): void
     {
-        $this->registerPolicies();
         Schema::defaultStringLength(191);
     }
 }
