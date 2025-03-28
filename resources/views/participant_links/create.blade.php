@@ -8,12 +8,20 @@
 
     <div>
         <label class="block font-medium text-gray-700 mb-1">Select User</label>
-        <select name="related_user_id" class="w-full border rounded-md px-3 py-2" required>
-            <option value="">-- Select a user --</option>
-            @foreach($users as $user)
-                <option value="{{ $user->id }}">{{ $user->full_name }} ({{ ucfirst($user->user_type) }}) - {{ $user->email }}</option>
-            @endforeach
-        </select>
+        <div class="border rounded-md p-2 max-h-60 overflow-y-auto space-y-2 bg-white">
+            @forelse($users as $user)
+                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                    <input type="radio" name="related_user_id" value="{{ $user->id }}" required>
+                    <div>
+                        <strong>{{ $user->full_name }}</strong> 
+                        <span class="text-xs text-gray-500">({{ ucfirst($user->user_type) }})</span><br>
+                        <small>{{ $user->email }}</small>
+                    </div>
+                </label>
+            @empty
+                <p class="text-sm text-gray-500">No users available for linking.</p>
+            @endforelse
+        </div>
     </div>
 
     <div>
@@ -25,9 +33,10 @@
         </select>
     </div>
 
-    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">Link User</button>
+    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-full">Link User</button>
 </form>
 
+{{-- Existing Links --}}
 @if($participant->parentLinks->count() || $participant->supportCoordinatorLinks->count())
     <div class="mt-8 bg-white p-6 rounded shadow-md space-y-4">
         <h2 class="text-lg font-semibold text-gray-800">🔗 Existing Links</h2>
