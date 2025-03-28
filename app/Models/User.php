@@ -143,22 +143,22 @@ class User extends Authenticatable
         return $this->hasMany(ParticipantLink::class, 'participant_id');
     }
 
-    // Get parents linked to this participant
+    // All links where this user is the linked user (could be parent or support coordinator)
+    public function linkedParticipantLinks()
+    {
+        return $this->hasMany(ParticipantLink::class, 'linked_user_id');
+    }
+
+    // Easy access: Get parents
     public function linkedParents()
     {
-        return User::whereIn('id', ParticipantLink::where('participant_id', $this->id)->pluck('parent_id'))->get();
+        return $this->participantLinks()->where('relation', 'parent');
     }
 
-    // Get support coordinators linked to this participant
-    public function linkedCoordinators()
+    // Easy access: Get support coordinators
+    public function linkedSupportCoordinators()
     {
-        return User::whereIn('id', ParticipantLink::where('participant_id', $this->id)->pluck('support_coordinator_id'))->get();
-    }
-
-    // Participants this parent is linked to
-    public function linkedParticipants()
-    {
-        return User::whereIn('id', ParticipantLink::where('parent_id', $this->id)->pluck('participant_id'))->get();
+        return $this->participantLinks()->where('relation', 'support_coordinator');
     }
 
     // Participants this support coordinator is linked to
