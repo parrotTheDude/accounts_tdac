@@ -30,6 +30,17 @@ class User extends Authenticatable
         'external' => -3,
     ];
 
+    public function roleBadge()
+    {
+        return match($this->user_type) {
+            'parent' => 'bg-green-100 text-green-700',
+            'support_coordinator' => 'bg-blue-100 text-blue-700',
+            'external' => 'bg-gray-200 text-gray-700',
+            'participant' => 'bg-purple-100 text-purple-700',
+            default => 'bg-gray-200 text-gray-700'
+        };
+    }
+
     const ADMIN_ROLES = ['admin', 'superadmin', 'master'];
 
     /** @use HasFactory<\Database\Factories\UserFactory> */

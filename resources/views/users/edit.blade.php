@@ -137,7 +137,13 @@
             <ul class="divide-y divide-gray-200 text-sm">
                 @foreach($user->participantLinks as $link)
                 <li class="py-2 flex justify-between items-center">
-                    <span>{{ $link->relatedUser->full_name }} ({{ ucfirst($link->relationship) }})</span>
+                    <div>
+                        <strong>{{ $link->relatedUser->full_name }}</strong>
+                        <span class="ml-2 text-xs px-2 py-0.5 rounded {{ $link->relatedUser->roleBadge() }}">
+                            {{ ucfirst($link->relatedUser->user_type) }}
+                        </span>
+                        <span class="ml-1 text-xs text-gray-500">({{ ucfirst($link->relationship) }})</span>
+                    </div>
                     <form method="POST" action="{{ route('participants.links.unlink', [$user, $link->relatedUser]) }}" onsubmit="return confirm('Unlink this user?')">
                         @csrf
                         @method('DELETE')
@@ -158,7 +164,6 @@
 @endif
 
 @if($user->user_type === 'parent' || $user->user_type === 'support_coordinator')
-    <!-- Linked Participants -->
     <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">👥 Linked Participants</h2>
 
@@ -166,7 +171,13 @@
             <ul class="divide-y divide-gray-200 text-sm">
                 @foreach($user->linkedParticipants as $participant)
                     <li class="py-2 flex justify-between items-center">
-                        <span>{{ $participant->full_name }} ({{ ucfirst($participant->pivot->relationship) }})</span>
+                        <div>
+                            <strong>{{ $participant->full_name }}</strong>
+                            <span class="ml-2 text-xs px-2 py-0.5 rounded {{ $participant->roleBadge() }}">
+                                {{ ucfirst($participant->user_type) }}
+                            </span>
+                            <span class="ml-1 text-xs text-gray-500">({{ ucfirst($participant->pivot->relationship) }})</span>
+                        </div>
                         <form method="POST" action="{{ route('participants.links.unlink', [$participant, $user]) }}">
                             @csrf
                             @method('DELETE')
