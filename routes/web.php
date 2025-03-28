@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
 
         // Users
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::patch('/users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
@@ -84,7 +85,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [ParticipantLinkController::class, 'index'])->name('index');
             Route::get('/create', [ParticipantLinkController::class, 'create'])->name('create');
             Route::post('/', [ParticipantLinkController::class, 'store'])->name('store');
-            Route::delete('/{related}', [ParticipantLinkController::class, 'destroy'])->name('destroy');
+            Route::delete('/{related}', [ParticipantLinkController::class, 'unlink'])->name('unlink');
         });
     });
 });

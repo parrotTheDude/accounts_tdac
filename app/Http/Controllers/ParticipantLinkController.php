@@ -35,4 +35,15 @@ class ParticipantLinkController extends Controller
 
         return redirect()->route('users.edit', $participant)->with('success', 'Link added.');
     }
+
+    public function unlink(Request $request, User $participant, User $related)
+    {
+        ParticipantLink::where('participant_id', $participant->id)
+            ->where(function($q) use ($related) {
+                $q->where('parent_id', $related->id)
+                ->orWhere('support_coordinator_id', $related->id);
+            })->delete();
+
+        return response()->json(['success' => true]);
+    }
 }
