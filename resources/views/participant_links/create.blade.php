@@ -27,7 +27,7 @@
     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md" disabled id="link-btn">Link User</button>
 </form>
 
-@if($participant->linkedParents()->count() || $participant->linkedCoordinators()->count())
+@if($participant->linkedParents()->count() || $participant->linkedSupportCoordinators()->count())
     <div class="mt-8 bg-white p-6 rounded shadow-md space-y-4">
         <h2 class="text-lg font-semibold text-gray-800">🔗 Existing Links</h2>
 
