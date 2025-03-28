@@ -15,7 +15,7 @@ class ParticipantLinkController extends Controller
             abort(403, 'Only participants can have links.');
         }
 
-        $users = User::whereIn('user_type', ['parent', 'support_coordinator'])->get();
+        $users = User::whereIn('user_type', ['parent', 'support_coordinator', 'external'])->get();
 
         return view('participant_links.create', compact('participant', 'users'));
     }

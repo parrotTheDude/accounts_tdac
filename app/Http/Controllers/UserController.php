@@ -186,41 +186,4 @@ class UserController extends Controller
         $user->update(['archived_at' => null]);
         return back()->with('success', 'User unarchived.');
     }
-
-    public function search(Request $request)
-    {
-        $query = $request->input('q');
-        $participantId = $request->input('participant_id');
-    
-        // Only search for eligible roles
-        $allowedRoles = ['parent', 'support_coordinator', 'external', 'participant'];
-    
-        // Get already linked users
-        $linkedIds = ParticipantLink::where('participant_id', $participantId)
-            ->pluck('related_user_id')
-            ->toArray();
-    
-        // Search for eligible users not already linked
-        $users = User::query()
-            ->whereNotIn('id', $linkedIds)
-            ->whereIn('user_type', $allowedRoles)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('last_name', 'like', "%{$query}%")
-                  ->orWhere('email', 'like', "%{$query}%");
-            })
-            ->whereNull('archived_at')
-            ->orderBy('name')
-            ->take(10)
-            ->get(['id', 'name', 'last_name', 'email', 'user_type']);
-    
-        return response()->json($users->map(function ($user) {
-            return [
-                'id' => $user->id,
-                'full_name' => $user->full_name,
-                'email' => $user->email,
-                'user_type' => $user->user_type,
-            ];
-        }));
-    }
 }
