@@ -161,15 +161,13 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
         $user->update(['archived_at' => now()]);
-
-        return redirect()->route('users.index')->with('success', 'User archived.');
+        return back()->with('success', 'User archived.');
     }
 
     public function unarchive(User $user)
     {
         $this->authorize('update', $user);
         $user->update(['archived_at' => null]);
-
-        return redirect()->route('users.edit', $user->id)->with('success', 'User unarchived.');
+        return back()->with('success', 'User unarchived.');
     }
 }
