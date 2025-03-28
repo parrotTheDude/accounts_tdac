@@ -129,6 +129,36 @@
     @csrf
   </form>
 
+  @if($user->user_type === 'participant')
+    <div class="bg-white p-4 rounded-md shadow-sm mt-8">
+        <h2 class="font-semibold text-gray-800 mb-2">Linked Contacts</h2>
+
+        <div class="mb-4">
+            <label class="block font-medium text-gray-700 mb-1">Parent</label>
+            <select name="parent_id" class="w-full border rounded-md px-3 py-2">
+                <option value="">Not linked</option>
+                @foreach ($parents as $parent)
+                    <option value="{{ $parent->id }}" {{ optional($user->participantLink)->parent_id == $parent->id ? 'selected' : '' }}>
+                        {{ $parent->full_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-medium text-gray-700 mb-1">Support Coordinator</label>
+            <select name="support_coordinator_id" class="w-full border rounded-md px-3 py-2">
+                <option value="">Not linked</option>
+                @foreach ($coordinators as $coordinator)
+                    <option value="{{ $coordinator->id }}" {{ optional($user->participantLink)->support_coordinator_id == $coordinator->id ? 'selected' : '' }}>
+                        {{ $coordinator->full_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+@endif
+
   <!-- Current Subscriptions View (separate from form) -->
   @if ($subscriptions->count())
     <div class="mt-10 bg-white p-6 rounded-lg shadow-md">

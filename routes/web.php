@@ -8,6 +8,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BulkEmailController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\ParticipantLinkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,6 +78,13 @@ Route::middleware('auth')->group(function () {
             Route::get('{templateId}/send', [EmailController::class, 'sendForm'])->name('sendForm');
             Route::post('{templateId}/send', [EmailController::class, 'sendBulk'])->name('sendBulk');
             Route::post('{templateId}/send-test', [EmailController::class, 'sendTest'])->name('sendTest');
+        });
+
+        Route::prefix('participants/{participant}/links')->name('participants.links.')->group(function () {
+            Route::get('/', [ParticipantLinkController::class, 'index'])->name('index');
+            Route::get('/create', [ParticipantLinkController::class, 'create'])->name('create');
+            Route::post('/', [ParticipantLinkController::class, 'store'])->name('store');
+            Route::delete('/{related}', [ParticipantLinkController::class, 'destroy'])->name('destroy');
         });
     });
 });

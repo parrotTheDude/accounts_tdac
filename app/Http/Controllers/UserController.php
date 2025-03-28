@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\VerificationToken;
 use App\Services\PostmarkService;
 use Illuminate\Support\Str;
+use App\Http\Controllers\ParticipantLink;
 
 class UserController extends Controller
 {
@@ -67,13 +68,13 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        // Get distinct subscription list names from the DB
-        $lists = \App\Models\Subscription::distinct()->pluck('list_name');
-
-        // Get current subscriptions for the user
+        $lists = Subscription::distinct()->pluck('list_name');
         $subscriptions = $user->subscriptions;
 
-        return view('users.edit', compact('user', 'lists', 'subscriptions'));
+        $parents = User::where('user_type', 'parent')->get();
+        $coordinators = User::where('user_type', 'support_coordinator')->get();
+
+        return view('users.edit', compact('user', 'lists', 'subscriptions', 'parents', 'coordinators'));
     }
 
     public function update(Request $request, User $user)
@@ -95,6 +96,16 @@ class UserController extends Controller
 
         if (!empty($validated['password'])) {
             $user->update(['password' => \Hash::make($validated['password'])]);
+        }
+
+        if ($user->user_type === 'participant') {
+            ParticipantLink::updateOrCreate(
+                ['participant_id' => $user->id],
+                [
+                    'parent_id' => $request->input('parent_id'),
+                    'support_coordinator_id' => $request->input('support_coordinator_id'),
+                ]
+            );
         }
 
         // First, get all known list names to avoid adding new unintended ones
