@@ -137,6 +137,11 @@ class User extends Authenticatable
         return !is_null($this->archived_at);
     }
 
+    public function participantLinks()
+    {
+        return $this->hasOne(ParticipantLink::class, 'participant_id');
+    }
+
     // Participants this parent is linked to
     public function linkedParticipants()
     {
