@@ -115,25 +115,6 @@
       </a>
 
       <div class="flex gap-2">
-
-          @if(!$user->isArchived())
-              <form method="POST" action="{{ route('users.archive', $user->id) }}">
-                  @csrf
-                  <button type="submit"
-                          class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-md text-sm font-medium">
-                      🗑️ Archive User
-                  </button>
-              </form>
-          @else
-              <form method="POST" action="{{ route('users.unarchive', $user->id) }}">
-                  @csrf
-                  <button type="submit"
-                          class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-2 rounded-md text-sm font-medium">
-                      ♻️ Unarchive User
-                  </button>
-              </form>
-          @endif
-
           <button type="submit"
                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
               💾 Save Changes
@@ -164,6 +145,18 @@
       </ul>
     </div>
   @endif
+
+  @if (!$user->isArchived())
+    <form action="{{ route('users.archive', $user) }}" method="POST" onsubmit="return confirm('Are you sure you want to archive this user?')" class="inline">
+        @csrf
+        <button type="submit" class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded text-xs">Archive</button>
+    </form>
+@else
+    <form action="{{ route('users.unarchive', $user) }}" method="POST" onsubmit="return confirm('Restore this user?')" class="inline">
+        @csrf
+        <button type="submit" class="bg-green-100 text-green-700 px-3 py-1 rounded text-xs">Unarchive</button>
+    </form>
+@endif
 
   <script>
     const roleSelect = document.getElementById('user-role');
