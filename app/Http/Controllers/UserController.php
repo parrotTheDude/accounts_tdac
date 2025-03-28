@@ -24,10 +24,12 @@ class UserController extends Controller
         $query->whereIn('user_type', $allowedRoles);
 
         // Check if archived filter is applied
-        if ($request->boolean('archived')) {
-            $query->where('archived', true);
+        if ($request->has('archived') && $request->input('archived') == '1') {
+            // Show archived users
+            $query->whereNotNull('archived_at');
         } else {
-            $query->where('archived', false);
+            // Show active users by default
+            $query->whereNull('archived_at');
         }
 
         // Optional search
