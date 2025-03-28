@@ -68,13 +68,14 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
 
-        $lists = Subscription::distinct()->pluck('list_name');
+        if ($user->user_type === 'participant') {
+            $user->load('participantLinks.relatedUser');
+        }
+
+        $lists = \App\Models\Subscription::distinct()->pluck('list_name');
         $subscriptions = $user->subscriptions;
 
-        $parents = User::where('user_type', 'parent')->get();
-        $coordinators = User::where('user_type', 'support_coordinator')->get();
-
-        return view('users.edit', compact('user', 'lists', 'subscriptions', 'parents', 'coordinators'));
+        return view('users.edit', compact('user', 'lists', 'subscriptions'));
     }
 
     public function update(Request $request, User $user)
