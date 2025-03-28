@@ -47,6 +47,7 @@ class User extends Authenticatable
         'password',
         'user_type',
         'gender',
+        'archived_at',
     ];
 
     /**
