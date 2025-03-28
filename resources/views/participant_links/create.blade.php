@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         searchResults.innerHTML = '<div class="text-sm text-gray-500">Searching...</div>';
 
-        const response = await fetch(`/users/search?q=${encodeURIComponent(query)}&participant_id={{ $participant->id }}`);
+        const response = await fetch("{{ route('users.search') }}?q=" + encodeURIComponent(query) + "&participant_id={{ $participant->id }}");
         const users = await response.json();
 
         if (users.length === 0) {
