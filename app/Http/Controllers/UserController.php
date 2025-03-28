@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\VerificationToken;
 use App\Services\PostmarkService;
 use Illuminate\Support\Str;
-use App\Http\Controllers\ParticipantLink;
+use App\Models\ParticipantLink;
 
 class UserController extends Controller
 {
