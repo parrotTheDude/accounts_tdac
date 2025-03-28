@@ -155,6 +155,30 @@
     </div>
 @endif
 
+@if($user->user_type === 'parent' || $user->user_type === 'support_coordinator')
+    <!-- Linked Participants -->
+    <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">👥 Linked Participants</h2>
+
+        @if ($user->linkedParticipants?->count())
+            <ul class="divide-y divide-gray-200 text-sm">
+                @foreach($user->linkedParticipants as $participant)
+                    <li class="py-2 flex justify-between items-center">
+                        <span>{{ $participant->full_name }} ({{ ucfirst($participant->pivot->relationship) }})</span>
+                        <form method="POST" action="{{ route('participants.links.unlink', [$participant, $user]) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:underline text-xs">🗑 Unlink</button>
+                        </form>
+                    </li>
+                @endforeach
+            </ul>
+        @else
+            <p class="text-sm text-gray-600">No linked participants yet.</p>
+        @endif
+    </div>
+@endif
+
   <!-- Current Subscriptions View (separate from form) -->
   @if ($subscriptions->count())
     <div class="mt-10 bg-white p-6 rounded-lg shadow-md">

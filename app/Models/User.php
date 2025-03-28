@@ -180,4 +180,9 @@ class User extends Authenticatable
             ParticipantLink::where('participant_id', $this->id)->value('support_coordinator_id')
         );
     }
+
+    public function linkedParticipants()
+    {
+        return $this->belongsToMany(User::class, 'participant_links', 'linked_user_id', 'participant_id');
+    }
 }

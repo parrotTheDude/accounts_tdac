@@ -26,27 +26,36 @@ class ParticipantLinkController extends Controller
     public function store(Request $request, User $participant)
     {
         $validated = $request->validate([
-            'related_user_id' => ['required', 'exists:users,id'],
-            'relationship'    => ['required', 'in:parent,support_coordinator'],
+            'linked_user_id' => ['required', 'exists:users,id'],
+            'relationship' => ['required', 'in:parent,support_coordinator'],
         ]);
 
+        // Check for existing link
+        $exists = ParticipantLink::where('participant_id', $participant->id)
+            ->where('linked_user_id', $validated['linked_user_id'])
+            ->where('relationship', $validated['relationship'])
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['duplicate' => 'This link already exists.']);
+        }
+
+        // Create new link
         ParticipantLink::create([
-            'participant_id'   => $participant->id,
-            'linked_user_id'   => $validated['related_user_id'],
-            'relation'         => $validated['relationship'],  
+            'participant_id' => $participant->id,
+            'linked_user_id' => $validated['linked_user_id'],
+            'relationship' => $validated['relationship'],
         ]);
 
         return redirect()->route('users.edit', $participant)->with('success', 'Link added.');
     }
 
-    public function unlink(Request $request, User $participant, User $related)
+    public function unlink(User $participant, User $related)
     {
         ParticipantLink::where('participant_id', $participant->id)
-            ->where(function($q) use ($related) {
-                $q->where('parent_id', $related->id)
-                ->orWhere('support_coordinator_id', $related->id);
-            })->delete();
+            ->where('linked_user_id', $related->id)
+            ->delete();
 
-        return response()->json(['success' => true]);
+        return back()->with('success', 'Link removed.');
     }
 }
