@@ -3,12 +3,7 @@
 @section('content')
   <h1 class="text-2xl font-bold text-gray-800 mb-6">🛠️ Edit User: {{ $user->full_name }}</h1>
 
-  <span class="inline-block text-xs font-semibold px-2 py-1 rounded 
-    {{ $user->user_type === 'master' ? 'bg-purple-100 text-purple-700' :
-      ($user->user_type === 'superadmin' ? 'bg-red-100 text-red-700' :
-      ($user->user_type === 'admin' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700')) }}">
-    {{ ucfirst($user->user_type) }}
-  </span>
+  <x-badge :label="ucfirst($user->user_type)" :type="$user->user_type" />
 
   @if (session('success'))
     <div class="mb-4 text-green-700 bg-green-100 border border-green-300 px-4 py-3 rounded shadow-sm">
@@ -150,9 +145,8 @@
                 <li class="py-2 flex justify-between items-center">
                     <div>
                         <strong>{{ $link->relatedUser->full_name }}</strong>
-                        <span class="ml-2 text-xs px-2 py-0.5 rounded {{ $link->relatedUser->roleBadge() }}">
-                            {{ ucfirst($link->relatedUser->user_type) }}
-                        </span>
+                        <x-badge :label="ucfirst($link->relatedUser->user_type)" :type="$link->relatedUser->user_type" class="ml-2" />
+                        <span class="ml-1 text-xs text-gray-500">({{ ucfirst($link->relationship) }})</span>
                     </div>
                     <form method="POST" action="{{ route('participants.links.unlink', [$user, $link->relatedUser]) }}" onsubmit="return confirm('Unlink this user?')">
                         @csrf
@@ -182,10 +176,8 @@
                 @foreach($user->linkedParticipants as $participant)
                     <li class="py-2 flex justify-between items-center">
                         <div>
-                            <strong>{{ $participant->full_name }}</strong>
-                            <span class="ml-2 text-xs px-2 py-0.5 rounded {{ $participant->roleBadge() }}">
-                                {{ ucfirst($participant->user_type) }}
-                            </span>
+                          <strong>{{ $participant->full_name }}</strong>
+                          <x-badge :label="ucfirst($participant->user_type)" :type="$participant->user_type" class="ml-2" />
                         </div>
                         <form method="POST" action="{{ route('participants.links.unlink', [$participant, $user]) }}">
                             @csrf
