@@ -19,11 +19,6 @@
       @endforeach
     </select>
 
-    <label class="inline-flex items-center space-x-2 text-sm">
-        <input type="checkbox" name="show_archived" value="1" {{ request('show_archived') ? 'checked' : '' }}>
-        <span>Show Archived Users</span>
-    </label>
-
     <button type="submit"
             class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
       Filter
@@ -36,6 +31,12 @@
       Reset Filters
     </a>
   @endif
+
+  {{-- Button to switch to archived users --}}
+    <a href="{{ route('users.index', ['archived' => 1]) }}"
+       class="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 text-sm flex items-center">
+        🗄️ Show Archived Users
+    </a>
 </div>
 
 <!-- Users Table -->
