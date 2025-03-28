@@ -193,7 +193,7 @@ class UserController extends Controller
         $participantId = $request->input('participant_id');
     
         // Only search for eligible roles
-        $allowedRoles = ['parent', 'support_coordinator', 'external'];
+        $allowedRoles = ['parent', 'support_coordinator', 'external', 'participant'];
     
         // Get already linked users
         $linkedIds = ParticipantLink::where('participant_id', $participantId)

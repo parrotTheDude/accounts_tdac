@@ -150,15 +150,15 @@ class User extends Authenticatable
     }
 
     // Easy access: Get parents
-    public function linkedParents()
+    public function parentLinks()
     {
-        return $this->participantLinks()->where('relation', 'parent');
+        return $this->hasMany(ParticipantLink::class, 'participant_id')->where('relation', 'parent')->with('relatedUser');
     }
 
     // Easy access: Get support coordinators
-    public function linkedSupportCoordinators()
+    public function supportCoordinatorLinks()
     {
-        return $this->participantLinks()->where('relation', 'support_coordinator');
+        return $this->hasMany(ParticipantLink::class, 'participant_id')->where('relation', 'support_coordinator')->with('relatedUser');
     }
 
     // Participants this support coordinator is linked to

@@ -27,41 +27,29 @@
     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md" disabled id="link-btn">Link User</button>
 </form>
 
-@if($participant->linkedParents()->count() || $participant->linkedSupportCoordinators()->count())
+@if($participant->parentLinks->count() || $participant->supportCoordinatorLinks->count())
     <div class="mt-8 bg-white p-6 rounded shadow-md space-y-4">
         <h2 class="text-lg font-semibold text-gray-800">🔗 Existing Links</h2>
 
         {{-- Parents --}}
-        @if($participant->linkedParents()->count())
+        @if($participant->parentLinks->count())
             <h3 class="text-md font-semibold text-gray-600 mt-4">👨‍👩‍👧 Parents</h3>
             <ul class="space-y-2">
-                @foreach($participant->linkedParents() as $parent)
-                    <li class="flex items-center justify-between bg-gray-50 p-2 rounded">
-                        <div>
-                            <strong>{{ $parent->full_name }}</strong> - {{ $parent->email }}
-                            <span class="text-xs bg-gray-200 px-2 py-1 rounded ml-2">{{ ucfirst($parent->user_type) }}</span>
-                        </div>
-                        <button data-id="{{ $parent->id }}" class="unlink-btn text-red-600 hover:underline text-sm">
-                            🗑 Unlink
-                        </button>
+                @foreach($participant->parentLinks as $link)
+                    <li>
+                        <strong>{{ $link->relatedUser->full_name ?? 'Missing User' }}</strong> - {{ $link->relatedUser->email ?? 'N/A' }}
                     </li>
                 @endforeach
             </ul>
         @endif
 
         {{-- Support Coordinators --}}
-        @if($participant->linkedCoordinators()->count())
+        @if($participant->supportCoordinatorLinks->count())
             <h3 class="text-md font-semibold text-gray-600 mt-4">🧑‍💼 Support Coordinators</h3>
             <ul class="space-y-2">
-                @foreach($participant->linkedCoordinators() as $sc)
-                    <li class="flex items-center justify-between bg-gray-50 p-2 rounded">
-                        <div>
-                            <strong>{{ $sc->full_name }}</strong> - {{ $sc->email }}
-                            <span class="text-xs bg-gray-200 px-2 py-1 rounded ml-2">{{ ucfirst($sc->user_type) }}</span>
-                        </div>
-                        <button data-id="{{ $sc->id }}" class="unlink-btn text-red-600 hover:underline text-sm">
-                            🗑 Unlink
-                        </button>
+                @foreach($participant->supportCoordinatorLinks as $link)
+                    <li>
+                        <strong>{{ $link->relatedUser->full_name ?? 'Missing User' }}</strong> - {{ $link->relatedUser->email ?? 'N/A' }}
                     </li>
                 @endforeach
             </ul>
