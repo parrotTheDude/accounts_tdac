@@ -71,4 +71,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
     ->middleware(['auth', 'throttle:6,1'])
     ->name('verification.send');
+    Route::post('/users/{user}/send-verification', [UserController::class, 'sendVerificationEmail'])
+     ->name('users.sendVerification')
+     ->middleware(['auth']);
 });

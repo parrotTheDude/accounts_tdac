@@ -122,7 +122,7 @@
   <!-- Main form ends -->
 
   <!-- Hidden Verification Form -->
-  <form id="sendVerificationForm" action="{{ route('verification.send') }}" method="POST" class="hidden">
+  <form id="sendVerificationForm" action="{{ route('users.sendVerification', $user->id) }}" method="POST" class="hidden">
     @csrf
   </form>
 

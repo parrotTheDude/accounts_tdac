@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Subscription;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\VerificationToken;
+use App\Services\PostmarkService;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -123,5 +126,29 @@ class UserController extends Controller
         }
 
         return back()->with('success', 'Subscriptions updated.');
+    }
+
+    public function sendVerificationEmail(User $user, PostmarkService $postmark)
+    {
+        $this->authorize('update', $user);
+
+        if ($user->hasVerifiedEmail()) {
+            return back()->with('success', 'Email is already verified.');
+        }
+
+        // Clear existing tokens
+        VerificationToken::where('user_id', $user->id)->delete();
+
+        $token = VerificationToken::create([
+            'user_id' => $user->id,
+            'token' => strtoupper(Str::random(6)),
+            'expires_at' => now()->addHour(),
+        ]);
+
+        $url = route('verification.verify', $token->token);
+
+        $postmark->sendVerificationEmail($user->email, $url);
+
+        return back()->with('success', 'Verification email sent to user!');
     }
 }
