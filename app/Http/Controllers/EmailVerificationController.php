@@ -40,29 +40,32 @@ class EmailVerificationController extends Controller
         return back()->with('success', 'Verification email sent!');
     }
 
-    public function verify(Request $request)
+    public function verify($token)
     {
-        $status = null;
-        $user = User::where('email', $request->email)->first();
+        $record = \App\Models\VerificationToken::where('token', strtoupper($token))
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$record) {
+            $status = 'invalid';
+            return view('auth.verification-result', compact('status'));
+        }
+
+        $user = $record->user;
 
         if (!$user) {
             $status = 'not_found';
-        } elseif ($user->hasVerifiedEmail()) {
+            return view('auth.verification-result', compact('status'));
+        }
+
+        if ($user->hasVerifiedEmail()) {
             $status = 'already_verified';
         } else {
-            $token = VerificationToken::where('user_id', $user->id)
-                ->where('token', strtoupper($request->token))
-                ->where('expires_at', '>', now())
-                ->first();
-
-            if (!$token) {
-                $status = 'invalid';
-            } else {
-                $user->markEmailAsVerified();
-                $token->delete();
-                $status = 'success';
-            }
+            $user->markEmailAsVerified();
+            $status = 'success';
         }
+
+        $record->delete();
 
         return view('auth.verification-result', compact('status'));
     }
