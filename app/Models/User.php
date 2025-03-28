@@ -137,24 +137,29 @@ class User extends Authenticatable
         return !is_null($this->archived_at);
     }
 
-    public function participantLinks()
-    {
-        return $this->hasOne(ParticipantLink::class, 'participant_id');
-    }
-
+    // Participants this parent is linked to
     public function linkedParticipants()
     {
-        return $this->hasMany(ParticipantLink::class, 'support_coordinator_id')
-                    ->orWhere('parent_id', $this->id);
+        return User::whereIn('id', ParticipantLink::where('parent_id', $this->id)->pluck('participant_id'))->get();
     }
 
+    // Participants this support coordinator is linked to
+    public function coordinatedParticipants()
+    {
+        return User::whereIn('id', ParticipantLink::where('support_coordinator_id', $this->id)->pluck('participant_id'))->get();
+    }
+
+    // The parents of this participant
     public function parents()
     {
-        return $this->participantLinks()->where('relation_type', 'parent');
+        return User::whereIn('id', ParticipantLink::where('participant_id', $this->id)->pluck('parent_id'))->get();
     }
 
-    public function supportCoordinators()
+    // The support coordinator of this participant
+    public function supportCoordinator()
     {
-        return $this->participantLinks()->where('relation_type', 'support_coordinator');
+        return User::find(
+            ParticipantLink::where('participant_id', $this->id)->value('support_coordinator_id')
+        );
     }
 }
