@@ -137,7 +137,7 @@ class User extends Authenticatable
         return !is_null($this->archived_at);
     }
 
-    public function participantLink()
+    public function participantLinks()
     {
         return $this->hasOne(ParticipantLink::class, 'participant_id');
     }
@@ -146,5 +146,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(ParticipantLink::class, 'support_coordinator_id')
                     ->orWhere('parent_id', $this->id);
+    }
+
+    public function parents()
+    {
+        return $this->participantLinks()->where('relation_type', 'parent');
+    }
+
+    public function supportCoordinators()
+    {
+        return $this->participantLinks()->where('relation_type', 'support_coordinator');
     }
 }
