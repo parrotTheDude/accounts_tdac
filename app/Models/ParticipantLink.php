@@ -11,8 +11,8 @@ class ParticipantLink extends Model
 
     protected $fillable = [
         'participant_id',
-        'support_coordinator_id',
-        'parent_id',
+        'linked_user_id',
+        'relation',  
     ];
 
     public function participant()

@@ -32,8 +32,8 @@ class ParticipantLinkController extends Controller
 
         ParticipantLink::create([
             'participant_id'   => $participant->id,
-            'linked_user_id'   => $validated['related_user_id'], // new correct field name
-            'relation'         => $validated['relationship'],    // use 'relation' matching your DB column
+            'linked_user_id'   => $validated['related_user_id'],
+            'relation'         => $validated['relationship'],  
         ]);
 
         return redirect()->route('users.edit', $participant)->with('success', 'Link added.');
