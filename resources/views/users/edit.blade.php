@@ -136,12 +136,14 @@
         @if ($user->participantLinks?->count())
             <ul class="divide-y divide-gray-200 text-sm">
                 @foreach($user->participantLinks as $link)
-                    <li class="py-2 flex justify-between items-center">
-                        <span>{{ $link->relatedUser->full_name }} ({{ ucfirst($link->relationship) }})</span>
-                        <form method="POST" action="#">
-                            {{-- Optional: add unlink functionality --}}
-                        </form>
-                    </li>
+                <li class="py-2 flex justify-between items-center">
+                    <span>{{ $link->relatedUser->full_name }} ({{ ucfirst($link->relationship) }})</span>
+                    <form method="POST" action="{{ route('participants.links.unlink', [$user, $link->relatedUser]) }}" onsubmit="return confirm('Unlink this user?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-600 text-xs hover:underline">🗑 Unlink</button>
+                    </form>
+                </li>
                 @endforeach
             </ul>
         @else

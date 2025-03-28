@@ -3,6 +3,12 @@
 @section('content')
 <h1 class="text-2xl font-bold text-gray-800 mb-6">🔗 Link User to {{ $participant->full_name }}</h1>
 
+@if (session('success'))
+    <div class="mb-4 text-green-700 bg-green-100 border border-green-300 px-4 py-3 rounded shadow-sm">
+        ✅ {{ session('success') }}
+    </div>
+@endif
+
 <form method="POST" action="{{ route('participants.links.store', $participant) }}" class="space-y-4 max-w-lg" id="link-form">
     @csrf
 

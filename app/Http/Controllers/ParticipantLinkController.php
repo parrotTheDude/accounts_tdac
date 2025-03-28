@@ -26,28 +26,25 @@ class ParticipantLinkController extends Controller
     public function store(Request $request, User $participant)
     {
         $validated = $request->validate([
-            'linked_user_id' => ['required', 'exists:users,id'],
+            'related_user_id' => ['required', 'exists:users,id'],
             'relationship' => ['required', 'in:parent,support_coordinator'],
         ]);
-
-        // Check for existing link
-        $exists = ParticipantLink::where('participant_id', $participant->id)
-            ->where('linked_user_id', $validated['linked_user_id'])
-            ->where('relationship', $validated['relationship'])
-            ->exists();
-
-        if ($exists) {
-            return back()->withErrors(['duplicate' => 'This link already exists.']);
+    
+        // Check if link already exists
+        if (ParticipantLink::where('participant_id', $participant->id)->where('related_user_id', $validated['related_user_id'])->exists()) {
+            return back()->with('error', 'This user is already linked to the participant.');
         }
-
-        // Create new link
+    
+        // Create link
         ParticipantLink::create([
             'participant_id' => $participant->id,
-            'linked_user_id' => $validated['linked_user_id'],
+            'related_user_id' => $validated['related_user_id'],
             'relationship' => $validated['relationship'],
         ]);
-
-        return redirect()->route('users.edit', $participant)->with('success', 'Link added.');
+    
+        return redirect()
+            ->route('users.edit', $participant)
+            ->with('success', 'User successfully linked.');
     }
 
     public function unlink(User $participant, User $related)
