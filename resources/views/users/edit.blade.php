@@ -86,6 +86,17 @@
       </select>
     </div>
 
+    <!-- Engangement Status -->
+    <div>
+        <label class="block font-medium text-gray-700 mb-1">Engagement Status</label>
+        <select name="engagement_status" class="w-full border rounded-md px-3 py-2">
+            <option value="">Not Set</option>
+            <option value="engaged" {{ old('engagement_status', $user->engagement_status) === 'engaged' ? 'selected' : '' }}>Engaged</option>
+            <option value="limited" {{ old('engagement_status', $user->engagement_status) === 'limited' ? 'selected' : '' }}>Limited</option>
+            <option value="unengaged" {{ old('engagement_status', $user->engagement_status) === 'unengaged' ? 'selected' : '' }}>Unengaged</option>
+        </select>
+    </div>
+
     <!-- Manage Subscriptions -->
     <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
       <h2 class="text-lg font-semibold text-gray-800 mb-4">🗂️ Manage Subscriptions</h2>
@@ -142,7 +153,6 @@
                         <span class="ml-2 text-xs px-2 py-0.5 rounded {{ $link->relatedUser->roleBadge() }}">
                             {{ ucfirst($link->relatedUser->user_type) }}
                         </span>
-                        <span class="ml-1 text-xs text-gray-500">({{ ucfirst($link->relationship) }})</span>
                     </div>
                     <form method="POST" action="{{ route('participants.links.unlink', [$user, $link->relatedUser]) }}" onsubmit="return confirm('Unlink this user?')">
                         @csrf
@@ -176,7 +186,6 @@
                             <span class="ml-2 text-xs px-2 py-0.5 rounded {{ $participant->roleBadge() }}">
                                 {{ ucfirst($participant->user_type) }}
                             </span>
-                            <span class="ml-1 text-xs text-gray-500">({{ ucfirst($participant->pivot->relationship) }})</span>
                         </div>
                         <form method="POST" action="{{ route('participants.links.unlink', [$participant, $user]) }}">
                             @csrf

@@ -46,6 +46,7 @@
       <th class="px-4 py-3">Name</th>
       <th class="px-4 py-3">Email</th>
       <th class="px-4 py-3">Role</th>
+      <th class="px-4 py-3">Status</th>
       <th class="px-4 py-3">Actions</th>
     </tr>
   </thead>
@@ -82,6 +83,10 @@
             {{ $user->role_name }}
           </span>
         </td>
+
+        <td class="px-4 py-2">
+          {{ ucfirst($user->engagement_status ?? 'Not Set') }}
+      </td>
 
         <!-- Actions -->
         <td class="px-4 py-2">

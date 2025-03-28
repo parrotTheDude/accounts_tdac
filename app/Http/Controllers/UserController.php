@@ -86,6 +86,7 @@ class UserController extends Controller
             'gender' => 'nullable|in:male,female,nonbinary,other',
             'user_type' => 'required|in:' . implode(',', array_keys(User::ROLES)),
             'password' => 'nullable|string|min:8|confirmed',
+            'engagement_status' => ['nullable', 'in:engaged,limited,unengaged'],
         ]);
 
         $user->update([
@@ -93,6 +94,7 @@ class UserController extends Controller
             'last_name' => $validated['last_name'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'user_type' => $validated['user_type'],
+            'engagement_status' => $validated['engagement_status'] ?? null,
         ]);
 
         if (!empty($validated['password'])) {
