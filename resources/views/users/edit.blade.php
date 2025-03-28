@@ -133,7 +133,7 @@
     <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">👥 Linked Users</h2>
         
-        @if($user->participantLinks->count())
+        @if ($user->participantLinks?->count())
             <ul class="divide-y divide-gray-200 text-sm">
                 @foreach($user->participantLinks as $link)
                     <li class="py-2 flex justify-between items-center">
