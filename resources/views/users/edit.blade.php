@@ -22,18 +22,18 @@
     </div>
   @endif
 
+  <!-- Main form starts -->
   <form method="POST" action="{{ route('users.update', $user->id) }}" class="space-y-6 max-w-lg">
-  @csrf
-  @method('PUT')
+    @csrf
+    @method('PUT')
 
-    <!-- Name -->
+    <!-- Name Fields -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
         <label class="block font-medium text-gray-700 mb-1">First Name</label>
         <input type="text" name="name" value="{{ old('name', $user->name) }}"
                class="w-full border rounded-md px-3 py-2">
       </div>
-
       <div>
         <label class="block font-medium text-gray-700 mb-1">Last Name</label>
         <input type="text" name="last_name" value="{{ old('last_name', $user->last_name) }}"
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <!-- Email (with verification status) -->
+    <!-- Email with status -->
     <div>
       <label class="block font-medium text-gray-700 mb-1 flex items-center gap-2">
         Email
@@ -49,20 +49,19 @@
           @if ($user->hasVerifiedEmail())
             <img src="{{ asset('icons/correct.svg') }}" alt="Verified" class="w-4 h-4 inline-block">
           @else
-          <button type="button"
-                  onclick="document.getElementById('sendVerificationForm').submit()"
-                  class="text-sm text-blue-600 hover:underline">
-            Verify Email
-          </button>
+            <button type="button"
+                    onclick="document.getElementById('sendVerificationForm').submit()"
+                    class="text-sm text-blue-600 hover:underline">
+              Verify Email
+            </button>
           @endif
         </span>
       </label>
-
       <input type="email" value="{{ $user->email }}" disabled
-            class="w-full border bg-gray-100 px-3 py-2 cursor-not-allowed">
+             class="w-full border bg-gray-100 px-3 py-2 cursor-not-allowed">
     </div>
 
-    <!-- Role (restrict options based on current user rank) -->
+    <!-- Role -->
     <div>
       <label class="block font-medium text-gray-700 mb-1">Role</label>
       <select name="user_type" id="user-role" class="w-full border rounded-md px-3 py-2">
@@ -74,7 +73,7 @@
       </select>
     </div>
 
-    <!-- Participant Type (only for participant/parent) -->
+    <!-- Participant Type -->
     <div id="participant-type-section" class="{{ in_array($user->user_type, ['participant', 'parent']) ? '' : 'hidden' }}">
       <label class="block font-medium text-gray-700 mb-1">Participant Type</label>
       <select name="gender" class="w-full border rounded-md px-3 py-2">
@@ -87,30 +86,49 @@
       </select>
     </div>
 
-     <!-- Subscriptions -->
-  <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
-    <h2 class="text-lg font-semibold text-gray-800 mb-4">🗂️ Manage Subscriptions</h2>
+    <!-- Manage Subscriptions -->
+    <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-lg font-semibold text-gray-800 mb-4">🗂️ Manage Subscriptions</h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      @foreach ($lists as $list)
-      @php
-        $subscribed = $user->subscriptions->contains(function ($sub) use ($list) {
-          return $sub->list_name === $list && $sub->subscribed;
-        });
-      @endphp
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        @foreach ($lists as $list)
+          @php
+            $subscribed = $user->subscriptions->contains(function ($sub) use ($list) {
+              return $sub->list_name === $list && $sub->subscribed;
+            });
+          @endphp
 
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" name="subscriptions[]" value="{{ $list }}" {{ $subscribed ? 'checked' : '' }}
-                class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring focus:ring-blue-200">
-          <span>{{ ucfirst(str_replace('_', ' ', $list)) }}</span>
-        </label>
-      @endforeach
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" name="subscriptions[]" value="{{ $list }}" {{ $subscribed ? 'checked' : '' }}
+                  class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring focus:ring-blue-200">
+            <span>{{ ucfirst(str_replace('_', ' ', $list)) }}</span>
+          </label>
+        @endforeach
+      </div>
     </div>
-    </div> <!-- End Subscriptions section -->
 
-@if ($subscriptions->count())
-  <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
-    <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+    <!-- Save Button -->
+    <div class="flex justify-between items-center mt-6">
+      <a href="{{ route('users.index') }}"
+         class="text-sm text-gray-600 hover:underline flex items-center gap-1">
+        ⬅️ Back to Users
+      </a>
+      <button type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
+        💾 Save Changes
+      </button>
+    </div>
+  </form>
+  <!-- Main form ends -->
+
+  <!-- Hidden Verification Form -->
+  <form id="sendVerificationForm" action="{{ route('verification.send') }}" method="POST" class="hidden">
+    @csrf
+  </form>
+
+  <!-- Current Subscriptions View (separate from form) -->
+  @if ($subscriptions->count())
+    <div class="mt-10 bg-white p-6 rounded-lg shadow-md">
       <h2 class="text-lg font-semibold text-gray-800 mb-4">📋 Current Subscription Status</h2>
       <ul class="divide-y divide-gray-200 text-sm">
         @foreach ($subscriptions as $sub)
@@ -124,41 +142,21 @@
       </ul>
     </div>
   @endif
-  </div>
-
-  <!-- Actions -->
-  <div class="flex justify-between items-center mt-6">
-    <a href="{{ route('users.index') }}"
-      class="text-sm text-gray-600 hover:underline flex items-center gap-1">
-      ⬅️ Back to Users
-    </a>
-    <button type="submit"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
-      💾 Save Changes
-    </button>
-  </div>
-
-  </form>
-
-  <!-- Hidden form OUTSIDE main form -->
-<form id="sendVerificationForm" action="{{ route('verification.send') }}" method="POST" class="hidden">
-  @csrf
-</form>
 
   <script>
-  const roleSelect = document.getElementById('user-role');
-  const participantSection = document.getElementById('participant-type-section');
+    const roleSelect = document.getElementById('user-role');
+    const participantSection = document.getElementById('participant-type-section');
 
-  function toggleParticipantSection() {
-    const selectedRole = roleSelect.value;
-    if (['participant', 'parent'].includes(selectedRole)) {
-      participantSection.classList.remove('hidden');
-    } else {
-      participantSection.classList.add('hidden');
+    function toggleParticipantSection() {
+      const selectedRole = roleSelect.value;
+      if (['participant', 'parent'].includes(selectedRole)) {
+        participantSection.classList.remove('hidden');
+      } else {
+        participantSection.classList.add('hidden');
+      }
     }
-  }
 
-  roleSelect.addEventListener('change', toggleParticipantSection);
-  window.addEventListener('DOMContentLoaded', toggleParticipantSection);
-</script>
+    roleSelect.addEventListener('change', toggleParticipantSection);
+    window.addEventListener('DOMContentLoaded', toggleParticipantSection);
+  </script>
 @endsection
