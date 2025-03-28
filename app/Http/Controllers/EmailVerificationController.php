@@ -40,25 +40,31 @@ class EmailVerificationController extends Controller
         return back()->with('success', 'Verification email sent!');
     }
 
-    public function verify(string $token)
+    public function verify(Request $request)
     {
-        $tokenRecord = VerificationToken::where('token', $token)
-            ->where('expires_at', '>', now())
-            ->first();
+        $status = null;
+        $user = User::where('email', $request->email)->first();
 
-        if (! $tokenRecord) {
-            return view('auth.email-invalid');
+        if (!$user) {
+            $status = 'not_found';
+        } elseif ($user->hasVerifiedEmail()) {
+            $status = 'already_verified';
+        } else {
+            $token = VerificationToken::where('user_id', $user->id)
+                ->where('token', strtoupper($request->token))
+                ->where('expires_at', '>', now())
+                ->first();
+
+            if (!$token) {
+                $status = 'invalid';
+            } else {
+                $user->markEmailAsVerified();
+                $token->delete();
+                $status = 'success';
+            }
         }
 
-        $user = $tokenRecord->user;
-
-        if (! $user->hasVerifiedEmail()) {
-            $user->markEmailAsVerified(); // Laravel's built-in method
-        }
-
-        $tokenRecord->delete();
-
-        return view('auth.email-verified');
+        return view('auth.verification-result', compact('status'));
     }
 
     public function showVerificationForm(string $token)
