@@ -21,24 +21,34 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('success', 'Verification email sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
 /*
 |--------------------------------------------------------------------------
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->group(function () {
-    
-    // ✅ All users can access settings
+Route::middleware('auth')->group(function () {
+
+    // Settings (accessible by all authenticated users)
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
 
-    // ✅ Only admins+ can access dashboard and admin features
+    // Email Verification (custom)
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+
+    Route::post('/users/{user}/send-verification', [UserController::class, 'sendVerificationEmail'])
+        ->name('users.sendVerification');
+
+    Route::get('/verify-email/{token}', [EmailVerificationController::class, 'verify'])
+        ->name('verification.verify');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Routes (only for master, superadmin, admin)
+    |--------------------------------------------------------------------------
+    */
     Route::middleware([\App\Http\Middleware\CheckRole::class . ':master,superadmin,admin'])->group(function () {
 
         // Dashboard
@@ -50,12 +60,12 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/users/{user}/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::post('/users/{user}/subscriptions', [UserController::class, 'updateSubscriptions'])
-    ->name('users.updateSubscriptions');
+            ->name('users.updateSubscriptions');
 
         // Subscriptions
         Route::view('/subscriptions', 'subscriptions.index')->name('subscriptions.index');
 
-        // Emails
+        // Email Tools
         Route::prefix('emails')->name('emails.')->group(function () {
             Route::get('/', [EmailController::class, 'index'])->name('index');
             Route::get('/history', [BulkEmailController::class, 'index'])->name('history');
@@ -67,11 +77,4 @@ Route::middleware(['auth'])->group(function () {
             Route::post('{templateId}/send-test', [EmailController::class, 'sendTest'])->name('sendTest');
         });
     });
-
-    Route::post('/email/verification-notification', [EmailVerificationController::class, 'send'])
-    ->middleware(['auth', 'throttle:6,1'])
-    ->name('verification.send');
-    Route::post('/users/{user}/send-verification', [UserController::class, 'sendVerificationEmail'])
-     ->name('users.sendVerification')
-     ->middleware(['auth']);
 });
