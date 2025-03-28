@@ -31,14 +31,14 @@ class ParticipantLinkController extends Controller
         ]);
     
         // Check if link already exists
-        if (ParticipantLink::where('participant_id', $participant->id)->where('related_user_id', $validated['related_user_id'])->exists()) {
+        if (ParticipantLink::where('participant_id', $participant->id)->where('linked_user_id', $validated['related_user_id'])->exists()) {
             return back()->with('error', 'This user is already linked to the participant.');
         }
     
         // Create link
         ParticipantLink::create([
             'participant_id' => $participant->id,
-            'related_user_id' => $validated['related_user_id'],
+            'linked_user_id' => $validated['related_user_id'],
             'relationship' => $validated['relationship'],
         ]);
     
