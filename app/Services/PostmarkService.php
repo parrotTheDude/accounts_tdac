@@ -59,17 +59,17 @@ class PostmarkService
     public function sendVerificationEmail(string $to, string $verificationUrl)
     {
         return $this->client->sendEmailWithTemplate(
-            config('services.postmark.from_email'), // from
-            $to,                                    // to
+            config('services.postmark.from_email'),
+            $to,
             39165532,                               // template_id
             ['accountCreationUrl' => $verificationUrl], // template variables
-            true,                                   // track opens
-            null,                                   // alias (optional)
-            true,                                   // inline css
+            true,                             // Track opens
+            'Verification Email',             // Alias
+            true,                             // Inline CSS
             null, null, null, null, null,
-            'Verification',                         // tag
+            'None',
             null,
-            'admin'                                 // message stream
+            'admin'
         );
     }
 }
