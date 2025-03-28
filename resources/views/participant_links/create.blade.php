@@ -3,25 +3,27 @@
 @section('content')
 <h1 class="text-2xl font-bold text-gray-800 mb-6">🔗 Link User to {{ $participant->full_name }}</h1>
 
-<form method="POST" action="{{ route('participants.links.store', $participant) }}" class="space-y-4 max-w-lg">
+<form method="POST" action="{{ route('participants.links.store', $participant) }}" class="space-y-4 max-w-lg" id="link-form">
     @csrf
 
     <div>
-        <label class="block font-medium text-gray-700 mb-1">Select User</label>
-        <div class="border rounded-md p-2 max-h-60 overflow-y-auto space-y-2 bg-white">
-            @forelse($users as $user)
-                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
-                    <input type="radio" name="related_user_id" value="{{ $user->id }}" required>
-                    <div>
-                        <strong>{{ $user->full_name }}</strong> 
-                        <span class="text-xs text-gray-500">({{ ucfirst($user->user_type) }})</span><br>
-                        <small>{{ $user->email }}</small>
-                    </div>
-                </label>
-            @empty
-                <p class="text-sm text-gray-500">No users available for linking.</p>
-            @endforelse
-        </div>
+        <label class="block font-medium text-gray-700 mb-1">Search User</label>
+        <input type="text" id="user-search" placeholder="Type name or email..." class="w-full border rounded-md px-3 py-2">
+    </div>
+
+    <div id="user-list" class="border rounded-md p-2 max-h-60 overflow-y-auto space-y-2 bg-white">
+        @forelse($users as $user)
+            <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded user-item">
+                <input type="radio" name="related_user_id" value="{{ $user->id }}" required>
+                <div>
+                    <strong class="user-name">{{ $user->full_name }}</strong> 
+                    <span class="text-xs text-gray-500 user-role">({{ ucfirst($user->user_type) }})</span><br>
+                    <small class="user-email">{{ $user->email }}</small>
+                </div>
+            </label>
+        @empty
+            <p class="text-sm text-gray-500">No users available for linking.</p>
+        @endforelse
     </div>
 
     <div>
@@ -68,4 +70,16 @@
 @endif
 
 <a href="{{ route('users.edit', $participant) }}" class="block mt-4 text-sm text-gray-500 hover:underline">⬅️ Back to Participant</a>
+
+<script>
+// Client-side search filter
+document.getElementById('user-search').addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    document.querySelectorAll('.user-item').forEach(item => {
+        const name = item.querySelector('.user-name').textContent.toLowerCase();
+        const email = item.querySelector('.user-email').textContent.toLowerCase();
+        item.style.display = name.includes(query) || email.includes(query) ? '' : 'none';
+    });
+});
+</script>
 @endsection
