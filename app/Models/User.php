@@ -129,4 +129,10 @@ class User extends Authenticatable
         $this->email_verified_at = now();
         return $this->save();
     }
+
+    // User.php
+    public function isArchived()
+    {
+        return !is_null($this->archived_at);
+    }
 }

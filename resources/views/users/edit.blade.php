@@ -110,14 +110,36 @@
     <!-- Save Button -->
     <div class="flex justify-between items-center mt-6">
       <a href="{{ route('users.index') }}"
-         class="text-sm text-gray-600 hover:underline flex items-center gap-1">
-        ⬅️ Back to Users
+        class="text-sm text-gray-600 hover:underline flex items-center gap-1">
+          ⬅️ Back to Users
       </a>
-      <button type="submit"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
-        💾 Save Changes
-      </button>
-    </div>
+
+      <div class="flex gap-2">
+
+          @if(!$user->isArchived())
+              <form method="POST" action="{{ route('users.archive', $user->id) }}">
+                  @csrf
+                  <button type="submit"
+                          class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-md text-sm font-medium">
+                      🗑️ Archive User
+                  </button>
+              </form>
+          @else
+              <form method="POST" action="{{ route('users.unarchive', $user->id) }}">
+                  @csrf
+                  <button type="submit"
+                          class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-2 rounded-md text-sm font-medium">
+                      ♻️ Unarchive User
+                  </button>
+              </form>
+          @endif
+
+          <button type="submit"
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium">
+              💾 Save Changes
+          </button>
+      </div>
+  </div>
   </form>
   <!-- Main form ends -->
 

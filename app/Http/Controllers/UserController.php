@@ -17,11 +17,16 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $currentUser = auth()->user();
-        $query = User::withCount('subscriptions')->latest();
+        $query = User::whereNull('archived_at')->withCount('subscriptions')->latest();
 
         // Apply role filtering: only allow current user to see roles they are allowed to
         $allowedRoles = $currentUser->getAvailableRoles()->keys()->all();
         $query->whereIn('user_type', $allowedRoles);
+
+        // In index()
+        if (! $request->filled('show_archived')) {
+            $query->whereNull('archived_at');
+        }
 
         // Search filter
         if ($request->filled('search')) {
@@ -150,5 +155,21 @@ class UserController extends Controller
         $postmark->sendVerificationEmail($user->email, $url);
 
         return back()->with('success', 'Verification email sent to user!');
+    }
+
+    public function archive(User $user)
+    {
+        $this->authorize('update', $user);
+        $user->update(['archived_at' => now()]);
+
+        return redirect()->route('users.index')->with('success', 'User archived.');
+    }
+
+    public function unarchive(User $user)
+    {
+        $this->authorize('update', $user);
+        $user->update(['archived_at' => null]);
+
+        return redirect()->route('users.edit', $user->id)->with('success', 'User unarchived.');
     }
 }

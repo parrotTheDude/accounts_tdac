@@ -61,6 +61,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::post('/users/{user}/subscriptions', [UserController::class, 'updateSubscriptions'])
             ->name('users.updateSubscriptions');
+        Route::post('/users/{user}/archive', [UserController::class, 'archive'])->name('users.archive');
+        Route::post('/users/{user}/unarchive', [UserController::class, 'unarchive'])->name('users.unarchive');
 
         // Subscriptions
         Route::view('/subscriptions', 'subscriptions.index')->name('subscriptions.index');

@@ -19,6 +19,11 @@
       @endforeach
     </select>
 
+    <label class="inline-flex items-center space-x-2 text-sm">
+        <input type="checkbox" name="show_archived" value="1" {{ request('show_archived') ? 'checked' : '' }}>
+        <span>Show Archived Users</span>
+    </label>
+
     <button type="submit"
             class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
       Filter
@@ -46,7 +51,11 @@
   <tbody class="text-sm text-gray-800 divide-y">
     @foreach ($users as $user)
       <tr>
-        <td class="px-4 py-2">{{ $user->full_name }}</td>
+        <td class="px-4 py-2">{{ $user->full_name }}
+        @if ($user->isArchived())
+            <span class="ml-2 bg-red-100 text-red-700 px-2 py-1 text-xs rounded-full">Archived</span>
+        @endif
+        </td>
 
         <!-- Email + Verified Badge -->
         <td class="px-4 py-2 flex items-center gap-2">
