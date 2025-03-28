@@ -17,24 +17,26 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $currentUser = auth()->user();
-        $query = User::whereNull('archived_at')->withCount('subscriptions')->latest();
+        $query = User::query()->latest();
 
-        // Apply role filtering: only allow current user to see roles they are allowed to
+        // Filter by allowed roles
         $allowedRoles = $currentUser->getAvailableRoles()->keys()->all();
         $query->whereIn('user_type', $allowedRoles);
 
-        // In index()
-        if (! $request->filled('show_archived')) {
-            $query->whereNull('archived_at');
+        // Check if archived filter is applied
+        if ($request->boolean('archived')) {
+            $query->where('archived', true);
+        } else {
+            $query->where('archived', false);
         }
 
-        // Search filter
+        // Optional search
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                ->orWhere('last_name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
