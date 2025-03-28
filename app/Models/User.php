@@ -137,9 +137,22 @@ class User extends Authenticatable
         return !is_null($this->archived_at);
     }
 
+    // All links where this user is the participant
     public function participantLinks()
     {
-        return $this->hasOne(ParticipantLink::class, 'participant_id');
+        return $this->hasMany(ParticipantLink::class, 'participant_id');
+    }
+
+    // Get parents linked to this participant
+    public function linkedParents()
+    {
+        return User::whereIn('id', ParticipantLink::where('participant_id', $this->id)->pluck('parent_id'))->get();
+    }
+
+    // Get support coordinators linked to this participant
+    public function linkedCoordinators()
+    {
+        return User::whereIn('id', ParticipantLink::where('participant_id', $this->id)->pluck('support_coordinator_id'))->get();
     }
 
     // Participants this parent is linked to
